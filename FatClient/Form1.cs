@@ -65,7 +65,7 @@ namespace FatClient
 
         private void AddButton_Click(object sender, EventArgs e)
         {
-            String name = (Maintab.Controls.Count + 1).ToString();
+            String name = string.IsNullOrEmpty(AddClientNameTextBox.Text) ?  (Maintab.Controls.Count + 1).ToString() : AddClientNameTextBox.Text;
             Equipment equipment = new Equipment(name);
             equipment.Name = name;
             addEquipment(equipment);
@@ -75,6 +75,11 @@ namespace FatClient
         {
             WebsocketClientForm websocketClientForm = new WebsocketClientForm();
             websocketClientForm.ShowDialog();
+        }
+
+        private void LogFolderButton_Click(object sender, EventArgs e)
+        {
+            System.Diagnostics.Process.Start(logPath);
         }
     }
 }

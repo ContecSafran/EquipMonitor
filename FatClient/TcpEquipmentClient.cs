@@ -38,6 +38,7 @@ namespace FatClient
                     IChannel channel = await bootstrap.ConnectAsync(new IPEndPoint(IPAddress.Parse(info.ip), info.port));
                     equipmentDto.ReceiveResponse("Client connected to server.");
                     byte[] messageBytes = StringToByteArray(info.command.Replace(" ", ""));
+                    equipmentDto.ReceiveResponse("hex :" + SafranByteToMessageDecoder.ByteArrayToString(messageBytes, 0, messageBytes.Length));
                     await channel.WriteAndFlushAsync(Unpooled.WrappedBuffer(messageBytes));
                     await Task.Delay(5000);
                     await channel.CloseAsync();
@@ -57,51 +58,27 @@ namespace FatClient
                     equipmentDto.ReceiveResponse("Client connected to server. ip : " + info.ip + " port : " + info.port);
                     if (info.command != "")
                     {
-                        equipmentDto.ReceiveResponse("send :" + info.command);
-                        string tmp = "";
-                        if (info.command.Contains("\\r\\n"))
+                        string[] lines = info.command.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+                        foreach (string line in lines)
                         {
-                            tmp = info.command.Replace("\\", "");
-                            byte[] messageBytes = Encoding.UTF8.GetBytes(tmp);
-                            messageBytes[messageBytes.Length - 2] = 0x0d;
-                            messageBytes[messageBytes.Length - 1] = 0x0a;
-                            equipmentDto.ReceiveResponse("hex :" + SafranByteToMessageDecoder.ByteArrayToString(messageBytes,0, messageBytes.Length));
-                            await channel.WriteAndFlushAsync(Unpooled.WrappedBuffer(messageBytes));
-                        }
-                        else if (info.command.Contains("\\n"))
-                        {
-                            tmp = info.command.Replace("\\", "");
-                            byte[] messageBytes = Encoding.UTF8.GetBytes(tmp);
-                            messageBytes[messageBytes.Length - 1] = 0x0a;
+                            string command = line;
+                            if (!string.IsNullOrEmpty(info.tail))
+                            {
+                                command += info.tail;
+                                command = command.Replace("\\r", "\r")  // 텍스트 "\r"을 실제 0x0D로
+                                                 .Replace("\\n", "\n"); // 텍스트 "\n"을 실제 0x0A로
+                            }
+                            equipmentDto.ReceiveResponse("send :" + command);
+                            byte[] messageBytes = Encoding.UTF8.GetBytes(command);
                             equipmentDto.ReceiveResponse("hex :" + SafranByteToMessageDecoder.ByteArrayToString(messageBytes, 0, messageBytes.Length));
                             await channel.WriteAndFlushAsync(Unpooled.WrappedBuffer(messageBytes));
+                            await Task.Delay(info.timeOut);
                         }
-                        else if (info.command.Contains("\\r"))
-                        {
-                            tmp = info.command.Replace("\\", "");
-                            byte[] messageBytes = Encoding.UTF8.GetBytes(tmp);
-                            messageBytes[messageBytes.Length - 1] = 0x0d;
-                            equipmentDto.ReceiveResponse("hex :" + SafranByteToMessageDecoder.ByteArrayToString(messageBytes, 0, messageBytes.Length));
-                            await channel.WriteAndFlushAsync(Unpooled.WrappedBuffer(messageBytes));
-                        }
-                        else if (info.command.Contains("\\n\\r"))
-                        {
-                            tmp = info.command.Replace("\\", "");
-                            byte[] messageBytes = Encoding.UTF8.GetBytes(tmp);
-                            messageBytes[messageBytes.Length - 2] = 0x0a;
-                            messageBytes[messageBytes.Length - 1] = 0x0d;
-                            equipmentDto.ReceiveResponse("hex :" + SafranByteToMessageDecoder.ByteArrayToString(messageBytes, 0, messageBytes.Length));
-                            await channel.WriteAndFlushAsync(Unpooled.WrappedBuffer(messageBytes));
-                        }
-                        else
-                        {
-                            byte[] messageBytes = Encoding.UTF8.GetBytes(tmp);
-                            equipmentDto.ReceiveResponse("hex :" + SafranByteToMessageDecoder.ByteArrayToString(messageBytes, 0, messageBytes.Length));
-                            await channel.WriteAndFlushAsync(Unpooled.WrappedBuffer(messageBytes));
-                        }
-
                     }
-                    await Task.Delay(5000);
+                    else
+                    {
+                        await Task.Delay(info.timeOut);
+                    }
                     await channel.CloseAsync();
                 }
                 equipmentDto.ReceiveResponse("close");

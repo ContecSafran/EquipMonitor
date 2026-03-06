@@ -18,17 +18,19 @@ namespace FatClient
         }
         protected override void ChannelRead0(IChannelHandlerContext ctx, IByteBuffer msg)
         {
-            equipmentDto.ReceiveResponse("receive : ");
             if (this.equipmentDto.info.isHex)
             {
                 string receivedMessage = ByteArrayToString(msg.Array, 0, msg.ReadableBytes);
-                equipmentDto.ReceiveResponse(receivedMessage);
+                equipmentDto.ReceiveResponse("receive : " + receivedMessage);
+
 
             }
             else
             {
                 string receivedMessage = msg.ToString(Encoding.UTF8);
-                equipmentDto.ReceiveResponse(receivedMessage);
+                equipmentDto.ReceiveResponse("receive : " + receivedMessage);
+                byte[] messageBytes = Encoding.UTF8.GetBytes(receivedMessage);
+                equipmentDto.ReceiveResponse("hex :" + SafranByteToMessageDecoder.ByteArrayToString(messageBytes, 0, messageBytes.Length));
             }
         }
         public static string ByteArrayToString(byte[] ba, int start, int size)

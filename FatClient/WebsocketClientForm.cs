@@ -51,7 +51,7 @@ namespace FatClient
             StreamWriter writer = File.CreateText(Form1.EquipmentPath + "websocket.json");
 
             this.websocketInfo.url = this.urlTextBox.Text;
-
+            /*
             if (!string.IsNullOrEmpty(this.idText.Text) && !string.IsNullOrEmpty(this.passwordTextBox.Text))
             {
                 string authInfo = $"{this.idText.Text}:{this.passwordTextBox.Text}";
@@ -60,7 +60,7 @@ namespace FatClient
             else
             {
                 this.websocketInfo.base64Auth = "";
-            }
+            }*/
 
             var options = new JsonSerializerOptions { WriteIndented = true };
             string jsonString = System.Text.Json.JsonSerializer.Serialize(this.websocketInfo, options);
@@ -82,8 +82,9 @@ namespace FatClient
             this.websocketInfo = System.Text.Json.JsonSerializer.Deserialize<WebsocketInfo>(jsonString);
 
             this.urlTextBox.Text = this.websocketInfo.url;
+            /*
             this.idText.Text = DecodeBasicAuthToken(this.websocketInfo.base64Auth).username;
-            this.passwordTextBox.Text = DecodeBasicAuthToken(this.websocketInfo.base64Auth).password;
+            this.passwordTextBox.Text = DecodeBasicAuthToken(this.websocketInfo.base64Auth).password;*/
         }
 
         /// <summary>

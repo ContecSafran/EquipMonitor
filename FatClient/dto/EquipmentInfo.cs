@@ -39,5 +39,15 @@ namespace FatClient.dto
             get;
             set;
         }
+        public String tail
+        {
+            get;
+            set;
+        }
+        public int timeOut
+        {
+            get;
+            set;
+        }
     }
 }

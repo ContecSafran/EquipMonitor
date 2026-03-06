@@ -67,6 +67,16 @@ namespace FatClient
             this.equipment.info.isHex = this.isHexMassage.Checked;
             this.equipment.info.command = this.MessageTextBox.Text;
             this.equipment.info.clientType = this.tcpRadio.Checked ? constants.ClientType.TCP : constants.ClientType.UDP;
+            this.equipment.info.tail = this.tailTextBox.Text;
+            int timeOut = 0;
+            if(Int32.TryParse(this.timeOutTextBox.Text, out timeOut))
+            {
+                this.equipment.info.timeOut = timeOut;
+            }
+            else
+            {
+                this.equipment.info.timeOut = 5000;
+            }
             var options = new JsonSerializerOptions { WriteIndented = true };
             string jsonString = System.Text.Json.JsonSerializer.Serialize(equipment.info, options);
             writer.Write(jsonString);
@@ -85,6 +95,8 @@ namespace FatClient
 
             this.ipText.Text = this.equipment.info.ip;
             this.portTextBox.Text = this.equipment.info.port.ToString();
+            this.timeOutTextBox.Text = this.equipment.info.timeOut.ToString();
+            this.tailTextBox.Text = this.equipment.info.tail;
             if (this.equipment.info.isHex)
             {
                 this.isHexMassage.Checked = true;

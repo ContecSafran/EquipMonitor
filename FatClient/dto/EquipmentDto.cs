@@ -37,8 +37,11 @@ namespace FatClient.dto
                 }
                 else
                 {
-                    Console.WriteLine(msg);
-                    ResponseTextBox.Text = ResponseTextBox.Text + "\r\n" + msg;
+
+                    string Time = DateTime.Now.ToString("[yyyy/MM/dd HH:mm:ss]");
+                    ResponseTextBox.Text = ResponseTextBox.Text + "\r\n" + Time + "\t" + msg;
+                    ResponseTextBox.Select(ResponseTextBox.Text.Length, 0);
+                    ResponseTextBox.ScrollToCaret();
                     StreamWriter sw = new StreamWriter(logFilePath, true);
                     sw.WriteLine(msg);
                     sw.Close();

@@ -35,6 +35,9 @@ namespace FatClient
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.AddButton = new System.Windows.Forms.ToolStripButton();
             this.WebsocketButton = new System.Windows.Forms.ToolStripButton();
+            this.AddClientNameTextBox = new System.Windows.Forms.ToolStripTextBox();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.LogFolderButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripContainer1.ContentPanel.SuspendLayout();
             this.toolStripContainer1.TopToolStripPanel.SuspendLayout();
             this.toolStripContainer1.SuspendLayout();
@@ -47,7 +50,7 @@ namespace FatClient
             this.Maintab.Location = new System.Drawing.Point(0, 0);
             this.Maintab.Name = "Maintab";
             this.Maintab.SelectedIndex = 0;
-            this.Maintab.Size = new System.Drawing.Size(800, 425);
+            this.Maintab.Size = new System.Drawing.Size(888, 425);
             this.Maintab.TabIndex = 5;
             // 
             // toolStripContainer1
@@ -56,11 +59,11 @@ namespace FatClient
             // toolStripContainer1.ContentPanel
             // 
             this.toolStripContainer1.ContentPanel.Controls.Add(this.Maintab);
-            this.toolStripContainer1.ContentPanel.Size = new System.Drawing.Size(800, 425);
+            this.toolStripContainer1.ContentPanel.Size = new System.Drawing.Size(888, 425);
             this.toolStripContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.toolStripContainer1.Location = new System.Drawing.Point(0, 0);
             this.toolStripContainer1.Name = "toolStripContainer1";
-            this.toolStripContainer1.Size = new System.Drawing.Size(800, 450);
+            this.toolStripContainer1.Size = new System.Drawing.Size(888, 450);
             this.toolStripContainer1.TabIndex = 6;
             this.toolStripContainer1.Text = "toolStripContainer1";
             // 
@@ -72,11 +75,14 @@ namespace FatClient
             // 
             this.toolStrip1.Dock = System.Windows.Forms.DockStyle.None;
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.AddClientNameTextBox,
             this.AddButton,
-            this.WebsocketButton});
+            this.toolStripSeparator1,
+            this.WebsocketButton,
+            this.LogFolderButton});
             this.toolStrip1.Location = new System.Drawing.Point(3, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(249, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(417, 25);
             this.toolStrip1.TabIndex = 0;
             // 
             // AddButton
@@ -99,11 +105,32 @@ namespace FatClient
             this.WebsocketButton.Text = "웹소켓클라이언트";
             this.WebsocketButton.Click += new System.EventHandler(this.WebsocketButton_Click);
             // 
+            // AddClientNameTextBox
+            // 
+            this.AddClientNameTextBox.Font = new System.Drawing.Font("맑은 고딕", 9F);
+            this.AddClientNameTextBox.Name = "AddClientNameTextBox";
+            this.AddClientNameTextBox.Size = new System.Drawing.Size(100, 25);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+            // 
+            // LogFolderButton
+            // 
+            this.LogFolderButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.LogFolderButton.Image = ((System.Drawing.Image)(resources.GetObject("LogFolderButton.Image")));
+            this.LogFolderButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.LogFolderButton.Name = "LogFolderButton";
+            this.LogFolderButton.Size = new System.Drawing.Size(91, 22);
+            this.LogFolderButton.Text = "로그 폴더 보기";
+            this.LogFolderButton.Click += new System.EventHandler(this.LogFolderButton_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(888, 450);
             this.Controls.Add(this.toolStripContainer1);
             this.Name = "Form1";
             this.Text = "FAT Client";
@@ -126,6 +153,9 @@ namespace FatClient
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripButton AddButton;
         private System.Windows.Forms.ToolStripButton WebsocketButton;
+        private System.Windows.Forms.ToolStripTextBox AddClientNameTextBox;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripButton LogFolderButton;
     }
 }
 

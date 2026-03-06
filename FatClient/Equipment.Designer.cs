@@ -49,6 +49,10 @@ namespace FatClient
             this.label1 = new System.Windows.Forms.Label();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
+            this.label4 = new System.Windows.Forms.Label();
+            this.tailTextBox = new System.Windows.Forms.TextBox();
+            this.timeOutTextBox = new System.Windows.Forms.TextBox();
+            this.label5 = new System.Windows.Forms.Label();
             this.EquipmentTableLayout.SuspendLayout();
             this.panel2.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -59,17 +63,23 @@ namespace FatClient
             // 
             // EquipmentTableLayout
             // 
-            this.EquipmentTableLayout.ColumnCount = 5;
-            this.EquipmentTableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 200F));
-            this.EquipmentTableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 200F));
-            this.EquipmentTableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 158F));
-            this.EquipmentTableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 269F));
-            this.EquipmentTableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 8F));
+            this.EquipmentTableLayout.ColumnCount = 7;
+            this.EquipmentTableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 150F));
+            this.EquipmentTableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 150F));
+            this.EquipmentTableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 130F));
+            this.EquipmentTableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 130F));
+            this.EquipmentTableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 150F));
+            this.EquipmentTableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 150F));
+            this.EquipmentTableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.EquipmentTableLayout.Controls.Add(this.label5, 5, 0);
+            this.EquipmentTableLayout.Controls.Add(this.timeOutTextBox, 5, 1);
+            this.EquipmentTableLayout.Controls.Add(this.tailTextBox, 4, 1);
+            this.EquipmentTableLayout.Controls.Add(this.label4, 4, 0);
             this.EquipmentTableLayout.Controls.Add(this.panel2, 2, 1);
             this.EquipmentTableLayout.Controls.Add(this.label3, 2, 0);
             this.EquipmentTableLayout.Controls.Add(this.ipText, 0, 1);
             this.EquipmentTableLayout.Controls.Add(this.portLabel, 1, 0);
-            this.EquipmentTableLayout.Controls.Add(this.portTextBox, 0, 1);
+            this.EquipmentTableLayout.Controls.Add(this.portTextBox, 1, 1);
             this.EquipmentTableLayout.Controls.Add(this.IPLabel, 0, 0);
             this.EquipmentTableLayout.Controls.Add(this.panel1, 3, 1);
             this.EquipmentTableLayout.Controls.Add(this.label2, 3, 0);
@@ -79,7 +89,7 @@ namespace FatClient
             this.EquipmentTableLayout.RowCount = 2;
             this.EquipmentTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.EquipmentTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.EquipmentTableLayout.Size = new System.Drawing.Size(824, 54);
+            this.EquipmentTableLayout.Size = new System.Drawing.Size(895, 54);
             this.EquipmentTableLayout.TabIndex = 0;
             // 
             // panel2
@@ -87,9 +97,9 @@ namespace FatClient
             this.panel2.Controls.Add(this.udpRadio);
             this.panel2.Controls.Add(this.tcpRadio);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel2.Location = new System.Drawing.Point(403, 23);
+            this.panel2.Location = new System.Drawing.Point(303, 23);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(152, 28);
+            this.panel2.Size = new System.Drawing.Size(124, 28);
             this.panel2.TabIndex = 13;
             // 
             // udpRadio
@@ -118,9 +128,9 @@ namespace FatClient
             // 
             this.label3.AutoSize = true;
             this.label3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label3.Location = new System.Drawing.Point(403, 0);
+            this.label3.Location = new System.Drawing.Point(303, 0);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(152, 20);
+            this.label3.Size = new System.Drawing.Size(124, 20);
             this.label3.TabIndex = 12;
             this.label3.Text = "통신 방식";
             this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -130,16 +140,16 @@ namespace FatClient
             this.ipText.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ipText.Location = new System.Drawing.Point(3, 23);
             this.ipText.Name = "ipText";
-            this.ipText.Size = new System.Drawing.Size(194, 21);
+            this.ipText.Size = new System.Drawing.Size(144, 21);
             this.ipText.TabIndex = 6;
             // 
             // portLabel
             // 
             this.portLabel.AutoSize = true;
             this.portLabel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.portLabel.Location = new System.Drawing.Point(203, 0);
+            this.portLabel.Location = new System.Drawing.Point(153, 0);
             this.portLabel.Name = "portLabel";
-            this.portLabel.Size = new System.Drawing.Size(194, 20);
+            this.portLabel.Size = new System.Drawing.Size(144, 20);
             this.portLabel.TabIndex = 2;
             this.portLabel.Text = "Port";
             this.portLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -147,9 +157,9 @@ namespace FatClient
             // portTextBox
             // 
             this.portTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.portTextBox.Location = new System.Drawing.Point(203, 23);
+            this.portTextBox.Location = new System.Drawing.Point(153, 23);
             this.portTextBox.Name = "portTextBox";
-            this.portTextBox.Size = new System.Drawing.Size(194, 21);
+            this.portTextBox.Size = new System.Drawing.Size(144, 21);
             this.portTextBox.TabIndex = 0;
             // 
             // IPLabel
@@ -158,7 +168,7 @@ namespace FatClient
             this.IPLabel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.IPLabel.Location = new System.Drawing.Point(3, 0);
             this.IPLabel.Name = "IPLabel";
-            this.IPLabel.Size = new System.Drawing.Size(194, 20);
+            this.IPLabel.Size = new System.Drawing.Size(144, 20);
             this.IPLabel.TabIndex = 1;
             this.IPLabel.Text = "IP";
             this.IPLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -168,9 +178,9 @@ namespace FatClient
             this.panel1.Controls.Add(this.isAsciiMassage);
             this.panel1.Controls.Add(this.isHexMassage);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(561, 23);
+            this.panel1.Location = new System.Drawing.Point(433, 23);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(263, 28);
+            this.panel1.Size = new System.Drawing.Size(124, 28);
             this.panel1.TabIndex = 10;
             // 
             // isAsciiMassage
@@ -199,9 +209,9 @@ namespace FatClient
             // 
             this.label2.AutoSize = true;
             this.label2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label2.Location = new System.Drawing.Point(561, 0);
+            this.label2.Location = new System.Drawing.Point(433, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(263, 20);
+            this.label2.Size = new System.Drawing.Size(124, 20);
             this.label2.TabIndex = 11;
             this.label2.Text = "메시지 타입";
             this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -226,7 +236,7 @@ namespace FatClient
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 60F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(830, 429);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(901, 429);
             this.tableLayoutPanel1.TabIndex = 3;
             // 
             // MessageTextBox
@@ -236,7 +246,7 @@ namespace FatClient
             this.MessageTextBox.Multiline = true;
             this.MessageTextBox.Name = "MessageTextBox";
             this.MessageTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.MessageTextBox.Size = new System.Drawing.Size(824, 133);
+            this.MessageTextBox.Size = new System.Drawing.Size(895, 133);
             this.MessageTextBox.TabIndex = 11;
             // 
             // ResponseTextBox
@@ -246,7 +256,7 @@ namespace FatClient
             this.ResponseTextBox.Multiline = true;
             this.ResponseTextBox.Name = "ResponseTextBox";
             this.ResponseTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.ResponseTextBox.Size = new System.Drawing.Size(824, 134);
+            this.ResponseTextBox.Size = new System.Drawing.Size(895, 134);
             this.ResponseTextBox.TabIndex = 10;
             // 
             // SendMessageButton
@@ -255,7 +265,7 @@ namespace FatClient
             this.SendMessageButton.Location = new System.Drawing.Point(0, 229);
             this.SendMessageButton.Margin = new System.Windows.Forms.Padding(0);
             this.SendMessageButton.Name = "SendMessageButton";
-            this.SendMessageButton.Size = new System.Drawing.Size(830, 60);
+            this.SendMessageButton.Size = new System.Drawing.Size(901, 60);
             this.SendMessageButton.TabIndex = 9;
             this.SendMessageButton.Text = "메시지 전송";
             this.SendMessageButton.UseVisualStyleBackColor = true;
@@ -267,7 +277,7 @@ namespace FatClient
             this.label1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label1.Location = new System.Drawing.Point(3, 60);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(824, 30);
+            this.label1.Size = new System.Drawing.Size(895, 30);
             this.label1.TabIndex = 8;
             this.label1.Text = "Message";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -282,7 +292,7 @@ namespace FatClient
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.RowCount = 1;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(830, 429);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(901, 429);
             this.tableLayoutPanel2.TabIndex = 5;
             // 
             // tableLayoutPanel3
@@ -299,8 +309,46 @@ namespace FatClient
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel3.Size = new System.Drawing.Size(830, 429);
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(901, 429);
             this.tableLayoutPanel3.TabIndex = 6;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label4.Location = new System.Drawing.Point(563, 0);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(144, 20);
+            this.label4.TabIndex = 14;
+            this.label4.Text = "Tail 문자열(Ascii만 해당)";
+            this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // tailTextBox
+            // 
+            this.tailTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tailTextBox.Location = new System.Drawing.Point(563, 23);
+            this.tailTextBox.Name = "tailTextBox";
+            this.tailTextBox.Size = new System.Drawing.Size(144, 21);
+            this.tailTextBox.TabIndex = 15;
+            // 
+            // timeOutTextBox
+            // 
+            this.timeOutTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.timeOutTextBox.Location = new System.Drawing.Point(713, 23);
+            this.timeOutTextBox.Name = "timeOutTextBox";
+            this.timeOutTextBox.Size = new System.Drawing.Size(144, 21);
+            this.timeOutTextBox.TabIndex = 16;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label5.Location = new System.Drawing.Point(713, 0);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(144, 20);
+            this.label5.TabIndex = 17;
+            this.label5.Text = "Time out(s)";
+            this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // Equipment
             // 
@@ -308,7 +356,7 @@ namespace FatClient
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.tableLayoutPanel2);
             this.Name = "Equipment";
-            this.Size = new System.Drawing.Size(830, 429);
+            this.Size = new System.Drawing.Size(901, 429);
             this.EquipmentTableLayout.ResumeLayout(false);
             this.EquipmentTableLayout.PerformLayout();
             this.panel2.ResumeLayout(false);
@@ -344,5 +392,9 @@ namespace FatClient
         private System.Windows.Forms.RadioButton isAsciiMassage;
         private System.Windows.Forms.RadioButton isHexMassage;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.TextBox timeOutTextBox;
+        private System.Windows.Forms.TextBox tailTextBox;
+        private System.Windows.Forms.Label label4;
     }
 }
