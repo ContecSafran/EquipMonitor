@@ -18,6 +18,13 @@ namespace FatClient
     {
         EquipmentDto equipment = new EquipmentDto();
         TcpEquipmentClient tcpClient = new TcpEquipmentClient();
+        public Equipment()
+        {
+            InitializeComponent();
+            equipment.info.name = "1";
+            equipment.ResponseHexTextBox = this.ResponseHexTextBox;
+            equipment.ResponseAsciiTextBox = this.ResponseAsciiTextBox;
+        }
         public Equipment(String name)
         {
             InitializeComponent();

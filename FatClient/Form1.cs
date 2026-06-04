@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -40,19 +40,32 @@ namespace FatClient
         }
         private void addEquipment(Equipment equipment)
         {
-            equipment.Dock = System.Windows.Forms.DockStyle.Fill;
-            equipment.Location = new System.Drawing.Point(3, 3);
-            equipment.Size = new System.Drawing.Size(1504, 619);
+            System.Windows.Forms.Panel containerPanel = new System.Windows.Forms.Panel();
+            containerPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            containerPanel.AutoScroll = true; // 스크롤 활성화
+
+            equipment.Dock = System.Windows.Forms.DockStyle.None;
+            equipment.Location = new System.Drawing.Point(0, 0);
+            System.Drawing.Size minSize = new System.Drawing.Size(750, 350); // 최소 보장 크기
+            equipment.Size = minSize;
             equipment.TabIndex = 0;
+
+            // Panel 크기 변화 시 동적으로 Equipment 크기 설정
+            containerPanel.Resize += (sender, e) =>
+            {
+                int newWidth = Math.Max(containerPanel.ClientSize.Width, minSize.Width);
+                int newHeight = Math.Max(containerPanel.ClientSize.Height, minSize.Height);
+                equipment.Size = new System.Drawing.Size(newWidth, newHeight);
+            };
+
             System.Windows.Forms.TabPage tabPage1 = new System.Windows.Forms.TabPage();
-            tabPage1.AutoScroll = true; // 스크롤 활성화
             tabPage1.SuspendLayout();
             Maintab.Controls.Add(tabPage1);
-            tabPage1.Controls.Add(equipment);
+            tabPage1.Controls.Add(containerPanel);
+            containerPanel.Controls.Add(equipment);
             tabPage1.Location = new System.Drawing.Point(4, 22);
             tabPage1.Name = equipment.Name;
             tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            tabPage1.Size = new System.Drawing.Size(1510, 625);
             tabPage1.TabIndex = 0;
             tabPage1.Text = equipment.Name;
             tabPage1.UseVisualStyleBackColor = true;
