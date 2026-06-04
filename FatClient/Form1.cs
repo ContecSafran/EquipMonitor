@@ -45,6 +45,7 @@ namespace FatClient
             equipment.Size = new System.Drawing.Size(1504, 619);
             equipment.TabIndex = 0;
             System.Windows.Forms.TabPage tabPage1 = new System.Windows.Forms.TabPage();
+            tabPage1.AutoScroll = true; // 스크롤 활성화
             tabPage1.SuspendLayout();
             Maintab.Controls.Add(tabPage1);
             tabPage1.Controls.Add(equipment);
