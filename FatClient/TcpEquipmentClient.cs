@@ -1,4 +1,4 @@
-﻿using DotNetty.Buffers;
+using DotNetty.Buffers;
 using DotNetty.Codecs;
 using DotNetty.Transport.Bootstrapping;
 using DotNetty.Transport.Channels;
@@ -15,16 +15,93 @@ namespace FatClient
 {
     class TcpEquipmentClient
     {
-        public async Task RunAsync(EquipmentDto equipmentDto)
+        MultithreadEventLoopGroup group;
+        IChannel channel;
+
+        public async Task ConnectAsync(EquipmentDto equipmentDto)
         {
-            var group = new MultithreadEventLoopGroup();
-            equipmentDto.initLogFile();
             EquipmentInfo info = equipmentDto.info;
             try
             {
-
-                if (info.isHex)
+                if (channel == null || !channel.Active)
                 {
+                    equipmentDto.initLogFile();
+                    group = new MultithreadEventLoopGroup();
+                    var bootstrap = new Bootstrap();
+                    bootstrap.Group(group)
+                             .Channel<TcpSocketChannel>()
+                             .Handler(new ActionChannelInitializer<ISocketChannel>(ctx =>
+                             {
+                                 var pipeline = ctx.Pipeline;
+                                 if (info.isHex)
+                                 {
+                                     pipeline.AddLast(new LengthFieldBasedFrameDecoder(100000, 4, 4, -8, 0));
+                                     pipeline.AddLast(new SafranByteToMessageDecoder(equipmentDto));
+                                 }
+                                 else
+                                 {
+                                     pipeline.AddLast(new ClientHandler(equipmentDto));
+                                 }
+                             }));
+
+                    channel = await bootstrap.ConnectAsync(new IPEndPoint(IPAddress.Parse(info.ip), info.port));
+                    equipmentDto.ReceiveAsciiResponse("Client connected to server. ip : " + info.ip + " port : " + info.port);
+                }
+            }
+            catch (Exception ex)
+            {
+                equipmentDto.ReceiveHexResponse(ex.Message);
+                await CloseAsync();
+            }
+        }
+
+        public async Task RunAsync(EquipmentDto equipmentDto)
+        {
+            EquipmentInfo info = equipmentDto.info;
+            try
+            {
+                await ConnectAsync(equipmentDto);
+
+                if (!string.IsNullOrEmpty(info.command))
+                {
+                    if (info.isHex)
+                    {
+                        byte[] messageBytes = StringToByteArray(info.command.Replace(" ", ""));
+                        equipmentDto.ReceiveHexResponse("hex :" + SafranByteToMessageDecoder.ByteArrayToString(messageBytes, 0, messageBytes.Length));
+                        await channel.WriteAndFlushAsync(Unpooled.WrappedBuffer(messageBytes));
+                    }
+                    else
+                    {
+                        string command = info.command;
+                        if (!string.IsNullOrEmpty(info.tail))
+                        {
+                            command += info.tail;
+                            command = command.Replace("\\r", "\r")
+                                             .Replace("\\n", "\n");
+                        }
+                        equipmentDto.ReceiveAsciiResponse("send :" + command);
+                        byte[] messageBytes = Encoding.UTF8.GetBytes(command);
+                        equipmentDto.ReceiveHexResponse("hex :" + SafranByteToMessageDecoder.ByteArrayToString(messageBytes, 0, messageBytes.Length));
+                        await channel.WriteAndFlushAsync(Unpooled.WrappedBuffer(messageBytes));
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                equipmentDto.ReceiveHexResponse(ex.Message);
+                await CloseAsync();
+            }
+        }
+
+        public async Task RunAsyncByBuffer(EquipmentDto equipmentDto, byte [] data)
+        {
+            EquipmentInfo info = equipmentDto.info;
+            try
+            {
+                if (channel == null || !channel.Active)
+                {
+                    equipmentDto.initLogFile();
+                    group = new MultithreadEventLoopGroup();
                     var bootstrap = new Bootstrap();
                     bootstrap.Group(group)
                              .Channel<TcpSocketChannel>()
@@ -35,64 +112,34 @@ namespace FatClient
                                  pipeline.AddLast(new SafranByteToMessageDecoder(equipmentDto));
                              }));
 
-                    IChannel channel = await bootstrap.ConnectAsync(new IPEndPoint(IPAddress.Parse(info.ip), info.port));
-                    equipmentDto.ReceiveResponse("Client connected to server.");
-                    byte[] messageBytes = StringToByteArray(info.command.Replace(" ", ""));
-                    equipmentDto.ReceiveResponse("hex :" + SafranByteToMessageDecoder.ByteArrayToString(messageBytes, 0, messageBytes.Length));
-                    await channel.WriteAndFlushAsync(Unpooled.WrappedBuffer(messageBytes));
-                    await Task.Delay(5000);
-                    await channel.CloseAsync();
+                    channel = await bootstrap.ConnectAsync(new IPEndPoint(IPAddress.Parse(info.ip), info.port));
+                    equipmentDto.ReceiveHexResponse("Client connected to server.");
                 }
-                else
-                {
-                    var bootstrap = new Bootstrap();
-                    bootstrap.Group(group)
-                             .Channel<TcpSocketChannel>()
-                             .Handler(new ActionChannelInitializer<ISocketChannel>(ctx =>
-                             {
-                                 var pipeline = ctx.Pipeline;
-                                 pipeline.AddLast(new ClientHandler(equipmentDto));
-                             }));
 
-                    IChannel channel = await bootstrap.ConnectAsync(new IPEndPoint(IPAddress.Parse(info.ip), info.port));
-                    equipmentDto.ReceiveResponse("Client connected to server. ip : " + info.ip + " port : " + info.port);
-                    if (info.command != "")
-                    {
-                        string[] lines = info.command.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
-                        foreach (string line in lines)
-                        {
-                            string command = line;
-                            if (!string.IsNullOrEmpty(info.tail))
-                            {
-                                command += info.tail;
-                                command = command.Replace("\\r", "\r")  // 텍스트 "\r"을 실제 0x0D로
-                                                 .Replace("\\n", "\n"); // 텍스트 "\n"을 실제 0x0A로
-                            }
-                            equipmentDto.ReceiveResponse("send :" + command);
-                            byte[] messageBytes = Encoding.UTF8.GetBytes(command);
-                            equipmentDto.ReceiveResponse("hex :" + SafranByteToMessageDecoder.ByteArrayToString(messageBytes, 0, messageBytes.Length));
-                            await channel.WriteAndFlushAsync(Unpooled.WrappedBuffer(messageBytes));
-                            await Task.Delay(info.timeOut);
-                        }
-                    }
-                    else
-                    {
-                        await Task.Delay(info.timeOut);
-                    }
-                    await channel.CloseAsync();
-                }
-                equipmentDto.ReceiveResponse("close");
-
+                equipmentDto.ReceiveHexResponse("hex 전송 size : " + data.Length.ToString());
+                await channel.WriteAndFlushAsync(Unpooled.WrappedBuffer(data));
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                equipmentDto.ReceiveResponse(ex.Message);
-            }
-            finally
-            {
-                await group.ShutdownGracefullyAsync();
+                equipmentDto.ReceiveHexResponse(ex.Message);
+                await CloseAsync();
             }
         }
+
+        public async Task CloseAsync()
+        {
+            if (channel != null)
+            {
+                await channel.CloseAsync();
+                channel = null;
+            }
+            if (group != null)
+            {
+                await group.ShutdownGracefullyAsync(TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(1));
+                group = null;
+            }
+        }
+
         public static byte[] StringToByteArray(string hex)
         {
             return Enumerable.Range(0, hex.Length)

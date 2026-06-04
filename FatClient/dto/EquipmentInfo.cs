@@ -44,10 +44,5 @@ namespace FatClient.dto
             get;
             set;
         }
-        public int timeOut
-        {
-            get;
-            set;
-        }
     }
 }

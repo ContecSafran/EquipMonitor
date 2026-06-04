@@ -1,4 +1,4 @@
-﻿using FatClient.dto;
+using FatClient.dto;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -17,17 +17,20 @@ namespace FatClient
     public partial class Equipment : UserControl
     {
         EquipmentDto equipment = new EquipmentDto();
+        TcpEquipmentClient tcpClient = new TcpEquipmentClient();
         public Equipment(String name)
         {
             InitializeComponent();
             equipment.info.name = name;
-            equipment.ResponseTextBox = this.ResponseTextBox;
+            equipment.ResponseHexTextBox = this.ResponseHexTextBox;
+            equipment.ResponseAsciiTextBox = this.ResponseAsciiTextBox;
         }
         public Equipment(FileInfo fi)
         {
             InitializeComponent();
             ReadEquipmentInfo(fi);
-            equipment.ResponseTextBox = this.ResponseTextBox;
+            equipment.ResponseHexTextBox = this.ResponseHexTextBox;
+            equipment.ResponseAsciiTextBox = this.ResponseAsciiTextBox;
         }
 
         private async void SendMessageButton_Click(object sender, EventArgs e)
@@ -39,8 +42,7 @@ namespace FatClient
         {
             if(equipment.info.clientType == constants.ClientType.TCP)
             {
-                TcpEquipmentClient client = new TcpEquipmentClient();
-                await client.RunAsync(equipment);
+                await tcpClient.RunAsync(equipment);
             }
             else
             {
@@ -60,7 +62,7 @@ namespace FatClient
             }
             else
             {
-                equipment.ReceiveResponse("error connect infomation file");
+                equipment.ReceiveAsciiResponse("error connect infomation file");
                 writer.Close();
                 return;
             }
@@ -68,15 +70,6 @@ namespace FatClient
             this.equipment.info.command = this.MessageTextBox.Text;
             this.equipment.info.clientType = this.tcpRadio.Checked ? constants.ClientType.TCP : constants.ClientType.UDP;
             this.equipment.info.tail = this.tailTextBox.Text;
-            int timeOut = 0;
-            if(Int32.TryParse(this.timeOutTextBox.Text, out timeOut))
-            {
-                this.equipment.info.timeOut = timeOut;
-            }
-            else
-            {
-                this.equipment.info.timeOut = 5000;
-            }
             var options = new JsonSerializerOptions { WriteIndented = true };
             string jsonString = System.Text.Json.JsonSerializer.Serialize(equipment.info, options);
             writer.Write(jsonString);
@@ -95,7 +88,6 @@ namespace FatClient
 
             this.ipText.Text = this.equipment.info.ip;
             this.portTextBox.Text = this.equipment.info.port.ToString();
-            this.timeOutTextBox.Text = this.equipment.info.timeOut.ToString();
             this.tailTextBox.Text = this.equipment.info.tail;
             if (this.equipment.info.isHex)
             {
@@ -119,6 +111,86 @@ namespace FatClient
                 this.udpRadio.Checked = true;
             }
             this.MessageTextBox.Text = this.equipment.info.command;
+        }
+        byte[] cumstomData = null;
+        private void button1_Click(object sender, EventArgs e)
+        {
+            cumstomData = SelectAndConvertFile();
+        }
+
+        public byte[] SelectAndConvertFile()
+        {
+            // 1. 파일 선택 창(OpenFileDialog) 생성 및 설정
+            using (OpenFileDialog openFileDialog = new OpenFileDialog())
+            {
+                openFileDialog.InitialDirectory = @"C:\"; // 초기 디렉토리
+                openFileDialog.Filter = "모든 파일 (*.*)|*.*"; // 파일 필터
+                openFileDialog.FilterIndex = 1;
+                openFileDialog.RestoreDirectory = true;
+
+                // 2. 사용자가 파일을 선택하고 '확인'을 눌렀는지 확인
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    // 선택한 파일의 경로 가져오기
+                    string filePath = openFileDialog.FileName;
+
+                    try
+                    {
+                        // 3. 파일을 바이너리로 읽어 바이트 배열로 반환
+                        byte[] fileBytes = File.ReadAllBytes(filePath);
+                        return fileBytes;
+                    }
+                    catch (IOException ex)
+                    {
+                        // 파일 읽기 실패 시 예외 처리
+                        Console.WriteLine($"파일을 읽는 중 오류가 발생했습니다: {ex.Message}");
+                        return null;
+                    }
+                }
+            }
+
+            // 파일을 선택하지 않고 취소한 경우
+            return null;
+        }
+
+        private void button2_ClickAsync(object sender, EventArgs e)
+        {
+            WriteEquipmentInfo();
+            SendBuffer();
+        }
+        private async void SendBuffer()
+        {
+
+            if (cumstomData != null)
+            {
+                await tcpClient.RunAsyncByBuffer(equipment, cumstomData);
+            }
+            else
+            {
+                MessageBox.Show("선택된 데이터가 없습니다");
+            }
+        }
+
+        private async void connectButton_Click(object sender, EventArgs e)
+        {
+            WriteEquipmentInfo();
+            if (equipment.info.clientType == constants.ClientType.TCP)
+            {
+                await tcpClient.ConnectAsync(equipment);
+            }
+            else
+            {
+                equipment.ReceiveAsciiResponse("UDP 모드입니다.");
+            }
+        }
+
+        private async void disconnectButton_Click(object sender, EventArgs e)
+        {
+            if (equipment.info.clientType == constants.ClientType.TCP)
+            {
+                await tcpClient.CloseAsync();
+                equipment.ReceiveAsciiResponse("TCP 연결이 해제되었습니다.");
+            }
         }
     }
 }

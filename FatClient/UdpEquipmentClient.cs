@@ -24,13 +24,13 @@ namespace FatClient
             {
                 try
                 {
-                    equipmentDto.ReceiveResponse("Client connected to server.");
+                    equipmentDto.ReceiveAsciiResponse("Client connected to server.");
 
                     // 1. 데이터 변환 및 전송
                     if (info.isHex)
                     {
                         byte[] messageBytes = StringToByteArray(info.command.Replace(" ", ""));
-                        equipmentDto.ReceiveResponse("hex :" + SafranByteToMessageDecoder.ByteArrayToString(messageBytes, 0, messageBytes.Length));
+                        equipmentDto.ReceiveHexResponse("hex :" + SafranByteToMessageDecoder.ByteArrayToString(messageBytes, 0, messageBytes.Length));
                         await udpClient.SendAsync(messageBytes, messageBytes.Length, info.ip, info.port);
                     }
                     else
@@ -46,48 +46,47 @@ namespace FatClient
                                                  .Replace("\\n", "\n"); // 텍스트 "\n"을 실제 0x0A로
                             }
 
-                            equipmentDto.ReceiveResponse("send :" + command);
+                            equipmentDto.ReceiveAsciiResponse("send :" + command);
                             byte[] messageBytes = Encoding.UTF8.GetBytes(command);
-                            equipmentDto.ReceiveResponse("hex :" + SafranByteToMessageDecoder.ByteArrayToString(messageBytes, 0, messageBytes.Length));
-                            equipmentDto.ReceiveResponse("hex :" + SafranByteToMessageDecoder.ByteArrayToString(messageBytes, 0, messageBytes.Length));
+                            equipmentDto.ReceiveHexResponse("hex :" + SafranByteToMessageDecoder.ByteArrayToString(messageBytes, 0, messageBytes.Length));
+                            equipmentDto.ReceiveHexResponse("hex :" + SafranByteToMessageDecoder.ByteArrayToString(messageBytes, 0, messageBytes.Length));
                             await udpClient.SendAsync(messageBytes, messageBytes.Length, info.ip, info.port);
 
                             // 2. 응답 대기 (타임아웃 처리)
                             // Task.WhenAny를 사용하여 수신과 타임아웃 중 먼저 끝나는 쪽을 처리
                             var receiveTask = udpClient.ReceiveAsync();
-                            var timeoutTask = Task.Delay(info.timeOut);
 
-                            var completedTask = await Task.WhenAny(receiveTask, timeoutTask);
+                            var completedTask = await Task.WhenAny(receiveTask);
 
                             if (completedTask == receiveTask)
                             {
                                 // 응답 성공
                                 UdpReceiveResult result = await receiveTask;
 
-                                equipmentDto.ReceiveResponse("receive hex :" + SafranByteToMessageDecoder.ByteArrayToString(result.Buffer, 0, result.Buffer.Length));
+                                equipmentDto.ReceiveHexResponse("receive hex :" + SafranByteToMessageDecoder.ByteArrayToString(result.Buffer, 0, result.Buffer.Length));
                                 if (info.isHex)
                                 {
                                     string receivedMessage = ByteArrayToString(result.Buffer, 0, result.Buffer.Length);
-                                    equipmentDto.ReceiveResponse(receivedMessage);
+                                    equipmentDto.ReceiveHexResponse(receivedMessage);
 
                                 }
                                 else
                                 {
                                     string receivedMessage = Encoding.UTF8.GetString(result.Buffer);
-                                    equipmentDto.ReceiveResponse(receivedMessage);
+                                    equipmentDto.ReceiveHexResponse(receivedMessage);
                                 }
                             }
                             else
                             {
                                 // 타임아웃 발생
-                                equipmentDto.ReceiveResponse("장비 응답 시간이 초과되었습니다.");
+                                equipmentDto.ReceiveAsciiResponse("장비 응답 시간이 초과되었습니다.");
                             }
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    equipmentDto.ReceiveResponse(ex.Message);
+                    equipmentDto.ReceiveAsciiResponse(ex.Message);
                 }
             }
 

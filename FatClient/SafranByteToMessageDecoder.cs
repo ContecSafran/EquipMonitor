@@ -20,7 +20,7 @@ namespace FatClient
         protected override void Decode(IChannelHandlerContext context, IByteBuffer msg, List<object> output)
         {
             string receivedMessage = ByteArrayToString(msg.Array, msg.ArrayOffset, msg.ReadableBytes);
-            equipmentDto.ReceiveResponse(receivedMessage);
+            equipmentDto.ReceiveHexResponse(receivedMessage);
         }
         public static string ByteArrayToString(byte[] ba, int start, int size)
         {

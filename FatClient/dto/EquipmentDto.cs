@@ -1,4 +1,4 @@
-﻿using FatClient.constants;
+using FatClient.constants;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -13,7 +13,12 @@ namespace FatClient.dto
     public class EquipmentDto
     {
         public EquipmentInfo info = new EquipmentInfo();
-        public System.Windows.Forms.TextBox ResponseTextBox
+        public System.Windows.Forms.TextBox ResponseHexTextBox
+        {
+            get;
+            set;
+        }
+        public System.Windows.Forms.TextBox ResponseAsciiTextBox
         {
             get;
             set;
@@ -23,30 +28,41 @@ namespace FatClient.dto
         {
             logFilePath = Form1.logPath + string.Format("{0}_{1}.txt", DateTime.Now.ToString("yyyyMMddhhmmss"), this.info.name);
         }
-        public void ReceiveResponse(string msg)
+        public void ReceiveResponse(string msg, System.Windows.Forms.TextBox textBox)
         {
-
-            if (ResponseTextBox != null)
+            if (textBox != null)
             {
-                if (ResponseTextBox.InvokeRequired)
+                if (textBox.InvokeRequired)
                 {
-                    ResponseTextBox.Invoke((Action)delegate
+                    textBox.Invoke((Action)delegate
                     {
-                        ReceiveResponse(msg);
+                        ReceiveResponse(msg, textBox);
                     });
                 }
                 else
                 {
+                    // 단독 \n 문자를 Windows TextBox 호환 개행문자인 \r\n으로 치환
+                    string formattedMsg = msg.Replace("\r\n", "\n").Replace("\n", "\r\n");
 
                     string Time = DateTime.Now.ToString("[yyyy/MM/dd HH:mm:ss]");
-                    ResponseTextBox.Text = ResponseTextBox.Text + "\r\n" + Time + "\t" + msg;
-                    ResponseTextBox.Select(ResponseTextBox.Text.Length, 0);
-                    ResponseTextBox.ScrollToCaret();
+                    textBox.Text = textBox.Text + "\r\n" + Time + "\t" + formattedMsg;
+                    textBox.Select(textBox.Text.Length, 0);
+                    textBox.ScrollToCaret();
                     StreamWriter sw = new StreamWriter(logFilePath, true);
-                    sw.WriteLine(msg);
+                    sw.WriteLine(formattedMsg);
                     sw.Close();
                 }
             }
+        }
+        public void ReceiveHexResponse(string msg)
+        {
+            this.ReceiveResponse(msg, ResponseHexTextBox);
+
+        }
+
+        public void ReceiveAsciiResponse(string msg)
+        {
+            this.ReceiveResponse(msg, ResponseAsciiTextBox);
         }
     }
 }

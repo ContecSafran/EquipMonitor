@@ -21,16 +21,16 @@ namespace FatClient
             if (this.equipmentDto.info.isHex)
             {
                 string receivedMessage = ByteArrayToString(msg.Array, 0, msg.ReadableBytes);
-                equipmentDto.ReceiveResponse("receive : " + receivedMessage);
+                equipmentDto.ReceiveHexResponse("receive : " + receivedMessage);
 
 
             }
             else
             {
                 string receivedMessage = msg.ToString(Encoding.UTF8);
-                equipmentDto.ReceiveResponse("receive : " + receivedMessage);
+                equipmentDto.ReceiveAsciiResponse("receive : " + receivedMessage);
                 byte[] messageBytes = Encoding.UTF8.GetBytes(receivedMessage);
-                equipmentDto.ReceiveResponse("hex :" + SafranByteToMessageDecoder.ByteArrayToString(messageBytes, 0, messageBytes.Length));
+                equipmentDto.ReceiveHexResponse("hex :" + SafranByteToMessageDecoder.ByteArrayToString(messageBytes, 0, messageBytes.Length));
             }
         }
         public static string ByteArrayToString(byte[] ba, int start, int size)
@@ -51,7 +51,7 @@ namespace FatClient
         }
         public override void ExceptionCaught(IChannelHandlerContext context, Exception exception)
         {
-            equipmentDto.ReceiveResponse(exception.Message);
+            equipmentDto.ReceiveHexResponse(exception.Message);
             context.CloseAsync();
         }
     }
