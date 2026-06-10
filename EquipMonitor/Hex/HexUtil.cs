@@ -15,6 +15,8 @@ namespace EquipMonitor
             { 
                 if (dataConverter != null) 
                     dataConverter.TargetTextBox = value; 
+                if (checkSumCalculator != null)
+                    checkSumCalculator.TargetTextBox = value;
             }
         }
 
