@@ -1,5 +1,5 @@
-﻿
-namespace FatClient
+
+namespace EquipMonitor
 {
     partial class WebsocketClientForm
     {

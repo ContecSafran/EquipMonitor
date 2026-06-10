@@ -1,4 +1,4 @@
-using FatClient.constants;
+using EquipMonitor.constants;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace FatClient.dto
+namespace EquipMonitor.dto
 {
     public class EquipmentDto
     {
@@ -31,7 +31,7 @@ namespace FatClient.dto
         string logFilePath;
         public void initLogFile()
         {
-            logFilePath = Form1.logPath + string.Format("{0}_{1}.txt", DateTime.Now.ToString("yyyyMMddhhmmss"), this.info.name);
+            logFilePath = EquipMonitor.logPath + string.Format("{0}_{1}.txt", DateTime.Now.ToString("yyyyMMddhhmmss"), this.info.name);
         }
         public void ReceiveResponse(string msg, System.Windows.Forms.TextBox textBox)
         {

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 
-namespace FatClient.dto
+namespace EquipMonitor.dto
 {
     public class LayoutSettings
     {

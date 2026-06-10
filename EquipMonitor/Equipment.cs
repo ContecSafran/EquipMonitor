@@ -1,4 +1,4 @@
-using FatClient.dto;
+using EquipMonitor.dto;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -12,7 +12,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace FatClient
+namespace EquipMonitor
 {
     public partial class Equipment : UserControl
     {
@@ -120,7 +120,7 @@ namespace FatClient
         }
         void WriteEquipmentInfo()
         {
-            StreamWriter writer = File.CreateText(Form1.EquipmentPath + this.equipment.info.name + ".txt");
+            StreamWriter writer = File.CreateText(EquipMonitor.EquipmentPath + this.equipment.info.name + ".txt");
             
             this.equipment.info.ip = this.ipText.Text;
             int port = 0;

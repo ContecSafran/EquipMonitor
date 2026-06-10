@@ -1,9 +1,9 @@
-﻿using DotNetty.Buffers;
+using DotNetty.Buffers;
 using DotNetty.Codecs;
 using DotNetty.Transport.Bootstrapping;
 using DotNetty.Transport.Channels;
 using DotNetty.Transport.Channels.Sockets;
-using FatClient.dto;
+using EquipMonitor.dto;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +12,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FatClient
+namespace EquipMonitor
 {
     class UdpEquipmentClient
     {

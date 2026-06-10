@@ -1,7 +1,7 @@
-﻿
-namespace FatClient
+
+namespace EquipMonitor
 {
-    partial class Form1
+    partial class EquipMonitor
     {
         /// <summary>
         /// 필수 디자이너 변수입니다.
@@ -29,7 +29,7 @@ namespace FatClient
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EquipMonitor));
             this.Maintab = new System.Windows.Forms.TabControl();
             this.toolStripContainer1 = new System.Windows.Forms.ToolStripContainer();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
@@ -133,7 +133,7 @@ namespace FatClient
             this.ClientSize = new System.Drawing.Size(822, 383);
             this.Controls.Add(this.toolStripContainer1);
             this.Name = "Form1";
-            this.Text = "FAT Client";
+            this.Text = "EquipMonitor";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.toolStripContainer1.ContentPanel.ResumeLayout(false);
             this.toolStripContainer1.TopToolStripPanel.ResumeLayout(false);

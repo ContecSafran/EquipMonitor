@@ -1,14 +1,14 @@
 using DotNetty.Buffers;
 using DotNetty.Codecs;
 using DotNetty.Transport.Channels;
-using FatClient.dto;
+using EquipMonitor.dto;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FatClient
+namespace EquipMonitor
 {
     public class SafranByteToMessageDecoder : ByteToMessageDecoder
     {

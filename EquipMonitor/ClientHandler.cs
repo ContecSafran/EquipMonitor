@@ -1,13 +1,13 @@
 using DotNetty.Buffers;
 using DotNetty.Transport.Channels;
-using FatClient.dto;
+using EquipMonitor.dto;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FatClient
+namespace EquipMonitor
 {
     class ClientHandler : SimpleChannelInboundHandler<IByteBuffer>
     {

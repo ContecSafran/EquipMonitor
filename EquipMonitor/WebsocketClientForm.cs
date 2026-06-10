@@ -1,4 +1,4 @@
-﻿using FatClient.dto;
+using EquipMonitor.dto;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,7 +13,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace FatClient
+namespace EquipMonitor
 {
     public partial class WebsocketClientForm : Form
     {
@@ -48,7 +48,7 @@ namespace FatClient
 
         void WriteEquipmentInfo()
         {
-            StreamWriter writer = File.CreateText(Form1.EquipmentPath + "websocket.json");
+            StreamWriter writer = File.CreateText(EquipMonitor.EquipmentPath + "websocket.json");
 
             this.websocketInfo.url = this.urlTextBox.Text;
             /*
@@ -70,12 +70,12 @@ namespace FatClient
 
         void ReadEquipmentInfo()
         {
-            if(!File.Exists(Form1.EquipmentPath + "websocket.json"))
+            if(!File.Exists(EquipMonitor.EquipmentPath + "websocket.json"))
             {
                 return;
             }
             // 2. 파일 내용 읽기
-            string jsonString = File.ReadAllText(Form1.EquipmentPath + "websocket.json");
+            string jsonString = File.ReadAllText(EquipMonitor.EquipmentPath + "websocket.json");
 
             // 3. 역직렬화 (JSON -> 객체)
             // <T> 부분에 복원할 클래스 명을 넣습니다.
@@ -214,7 +214,7 @@ namespace FatClient
 
         public void initLogFile()
         {
-            logFilePath = Form1.logPath + string.Format("Websocket {0}.txt", DateTime.Now.ToString("yyyyMMddhhmmss"));
+            logFilePath = EquipMonitor.logPath + string.Format("Websocket {0}.txt", DateTime.Now.ToString("yyyyMMddhhmmss"));
         }
 
         public void ReceiveResponse(string msg)

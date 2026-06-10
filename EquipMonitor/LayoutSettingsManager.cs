@@ -1,9 +1,9 @@
 using System;
 using System.IO;
 using System.Text.Json;
-using FatClient.dto;
+using EquipMonitor.dto;
 
-namespace FatClient
+namespace EquipMonitor
 {
     public static class LayoutSettingsManager
     {

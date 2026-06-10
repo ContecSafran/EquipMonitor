@@ -9,13 +9,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace FatClient
+namespace EquipMonitor
 {
-    public partial class Form1 : Form
+    public partial class EquipMonitor : Form
     {
         public static string logPath = System.Windows.Forms.Application.StartupPath + @"\Log\";
         public static string EquipmentPath = System.Windows.Forms.Application.StartupPath + @"\Equipment\";
-        public Form1()
+        public EquipMonitor()
         {
             InitializeComponent();
             this.FormClosing += Form1_FormClosing;
