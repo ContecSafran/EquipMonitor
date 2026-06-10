@@ -131,6 +131,24 @@
     <Compile Include="Equipment.Designer.cs">
       <DependentUpon>Equipment.cs</DependentUpon>
     </Compile>
+    <Compile Include="Hex\HexUtil.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Hex\HexUtil.Designer.cs">
+      <DependentUpon>HexUtil.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Hex\DataConverter.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Hex\DataConverter.Designer.cs">
+      <DependentUpon>DataConverter.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Hex\CheckSumCalculator.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Hex\CheckSumCalculator.Designer.cs">
+      <DependentUpon>CheckSumCalculator.cs</DependentUpon>
+    </Compile>
     <Compile Include="EquipMonitor.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -29,6 +29,7 @@ namespace EquipMonitor
         /// </summary>
         private void InitializeComponent()
         {
+            this.hexUtil1 = new HexUtil();
             this.EquipmentTableLayout = new System.Windows.Forms.TableLayoutPanel();
             this.disconnectButton = new System.Windows.Forms.Button();
             this.connectButton = new System.Windows.Forms.Button();
@@ -86,6 +87,16 @@ namespace EquipMonitor
             this.commandDescLayout.SuspendLayout();
             this.logTableLayoutPanel.SuspendLayout();
             this.SuspendLayout();
+            // 
+            // hexUtil1
+            // 
+            this.hexUtil1.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.hexUtil1.Location = new System.Drawing.Point(0, 28);
+            this.hexUtil1.Name = "hexUtil1";
+            this.hexUtil1.Size = new System.Drawing.Size(641, 30);
+            this.hexUtil1.TabIndex = 3;
+            this.hexUtil1.TargetTextBox = null;
+            this.hexUtil1.Visible = false;
             // 
             // EquipmentTableLayout
             // 
@@ -486,6 +497,7 @@ namespace EquipMonitor
             // commandInputSplitContainer.Panel2
             // 
             this.commandInputSplitContainer.Panel2.Controls.Add(this.MessageTextBox);
+            this.commandInputSplitContainer.Panel2.Controls.Add(this.hexUtil1);
             this.commandInputSplitContainer.Size = new System.Drawing.Size(641, 124);
             this.commandInputSplitContainer.SplitterDistance = 62;
             this.commandInputSplitContainer.TabIndex = 12;
@@ -536,7 +548,7 @@ namespace EquipMonitor
             this.MessageTextBox.Multiline = true;
             this.MessageTextBox.Name = "MessageTextBox";
             this.MessageTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.MessageTextBox.Size = new System.Drawing.Size(641, 58);
+            this.MessageTextBox.Size = new System.Drawing.Size(641, 28);
             this.MessageTextBox.TabIndex = 2;
             // 
             // label1
@@ -673,5 +685,6 @@ namespace EquipMonitor
         private System.Windows.Forms.Label commandDescLabel;
         private System.Windows.Forms.TextBox DescriptionTextBox;
         private System.Windows.Forms.SplitContainer commandInputSplitContainer;
+        private HexUtil hexUtil1;
     }
 }

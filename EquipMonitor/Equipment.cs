@@ -30,6 +30,7 @@ namespace EquipMonitor
             equipment.ResponseHexTextBox = this.ResponseHexTextBox;
             equipment.ResponseAsciiTextBox = this.ResponseAsciiTextBox;
             InitConnectionCallback();
+            InitHexUtil();
         }
         public Equipment(String name)
         {
@@ -40,6 +41,7 @@ namespace EquipMonitor
             equipment.ResponseHexTextBox = this.ResponseHexTextBox;
             equipment.ResponseAsciiTextBox = this.ResponseAsciiTextBox;
             InitConnectionCallback();
+            InitHexUtil();
         }
         public Equipment(FileInfo fi)
         {
@@ -50,6 +52,17 @@ namespace EquipMonitor
             equipment.ResponseHexTextBox = this.ResponseHexTextBox;
             equipment.ResponseAsciiTextBox = this.ResponseAsciiTextBox;
             InitConnectionCallback();
+            InitHexUtil();
+        }
+
+        private void InitHexUtil()
+        {
+            this.hexUtil1.TargetTextBox = this.MessageTextBox;
+            this.hexUtil1.Visible = this.isHexMassage.Checked;
+            this.isHexMassage.CheckedChanged += (s, e) =>
+            {
+                this.hexUtil1.Visible = this.isHexMassage.Checked;
+            };
         }
 
         private void InitTimer()
