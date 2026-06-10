@@ -18,10 +18,16 @@ namespace FatClient
         public Form1()
         {
             InitializeComponent();
+            this.FormClosing += Form1_FormClosing;
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            LayoutSettingsManager.Load();
+            this.Width = LayoutSettingsManager.Settings.FormWidth;
+            this.Height = LayoutSettingsManager.Settings.FormHeight;
+            this.WindowState = LayoutSettingsManager.Settings.FormState;
+
             if (Directory.Exists(logPath) == false)
             {
                 Directory.CreateDirectory(logPath);
@@ -37,6 +43,22 @@ namespace FatClient
                 equipment.Name = Path.GetFileNameWithoutExtension(fi.FullName);
                 addEquipment(equipment);
             }
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (this.WindowState == FormWindowState.Normal)
+            {
+                LayoutSettingsManager.Settings.FormWidth = this.Width;
+                LayoutSettingsManager.Settings.FormHeight = this.Height;
+            }
+            else
+            {
+                LayoutSettingsManager.Settings.FormWidth = this.RestoreBounds.Width;
+                LayoutSettingsManager.Settings.FormHeight = this.RestoreBounds.Height;
+            }
+            LayoutSettingsManager.Settings.FormState = this.WindowState;
+            LayoutSettingsManager.Save();
         }
         private void addEquipment(Equipment equipment)
         {

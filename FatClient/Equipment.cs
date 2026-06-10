@@ -18,9 +18,14 @@ namespace FatClient
     {
         EquipmentDto equipment = new EquipmentDto();
         TcpEquipmentClient tcpClient = new TcpEquipmentClient();
+        private System.Windows.Forms.Timer saveTimer;
+        private bool isFirstLayout = true;
+        private bool isRestoring = false;
         public Equipment()
         {
             InitializeComponent();
+            this.commandInputSplitContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
+            InitTimer();
             equipment.info.name = "1";
             equipment.ResponseHexTextBox = this.ResponseHexTextBox;
             equipment.ResponseAsciiTextBox = this.ResponseAsciiTextBox;
@@ -29,6 +34,8 @@ namespace FatClient
         public Equipment(String name)
         {
             InitializeComponent();
+            this.commandInputSplitContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
+            InitTimer();
             equipment.info.name = name;
             equipment.ResponseHexTextBox = this.ResponseHexTextBox;
             equipment.ResponseAsciiTextBox = this.ResponseAsciiTextBox;
@@ -37,10 +44,27 @@ namespace FatClient
         public Equipment(FileInfo fi)
         {
             InitializeComponent();
+            this.commandInputSplitContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
+            InitTimer();
             ReadEquipmentInfo(fi);
             equipment.ResponseHexTextBox = this.ResponseHexTextBox;
             equipment.ResponseAsciiTextBox = this.ResponseAsciiTextBox;
             InitConnectionCallback();
+        }
+
+        private void InitTimer()
+        {
+            if (this.components == null)
+            {
+                this.components = new System.ComponentModel.Container();
+            }
+            this.saveTimer = new System.Windows.Forms.Timer(this.components);
+            this.saveTimer.Interval = 500; // 500ms debounce
+            this.saveTimer.Tick += (s, ev) =>
+            {
+                this.saveTimer.Stop();
+                LayoutSettingsManager.Save();
+            };
         }
 
         private void InitConnectionCallback()
@@ -272,11 +296,13 @@ namespace FatClient
                 if (commandListBox.SelectedItem is CommandInfo cmdInfo)
                 {
                     this.TitleTextBox.Text = cmdInfo.Title;
+                    this.DescriptionTextBox.Text = cmdInfo.Description;
                     this.MessageTextBox.Text = cmdInfo.Content;
                 }
                 else if (commandListBox.SelectedItem != null)
                 {
                     this.TitleTextBox.Text = string.Empty;
+                    this.DescriptionTextBox.Text = string.Empty;
                     this.MessageTextBox.Text = commandListBox.SelectedItem.ToString();
                 }
             }
@@ -285,6 +311,7 @@ namespace FatClient
         private void addCommandButton_Click(object sender, EventArgs e)
         {
             string title = this.TitleTextBox.Text.Trim();
+            string description = this.DescriptionTextBox.Text.Trim();
             string content = this.MessageTextBox.Text.Trim();
             if (!string.IsNullOrEmpty(content))
             {
@@ -292,7 +319,7 @@ namespace FatClient
                 CommandInfo matchedItem = null;
                 foreach (var item in commandListBox.Items)
                 {
-                    if (item is CommandInfo cmdInfo && cmdInfo.Title == title && cmdInfo.Content == content)
+                    if (item is CommandInfo cmdInfo && cmdInfo.Title == title && cmdInfo.Description == description && cmdInfo.Content == content)
                     {
                         exists = true;
                         matchedItem = cmdInfo;
@@ -302,7 +329,7 @@ namespace FatClient
 
                 if (!exists)
                 {
-                    var newCmd = new CommandInfo { Title = title, Content = content };
+                    var newCmd = new CommandInfo { Title = title, Description = description, Content = content };
                     commandListBox.Items.Add(newCmd);
                     commandListBox.SelectedItem = newCmd;
                     WriteEquipmentInfo();
@@ -320,6 +347,7 @@ namespace FatClient
             {
                 commandListBox.Items.RemoveAt(commandListBox.SelectedIndex);
                 this.TitleTextBox.Clear();
+                this.DescriptionTextBox.Clear();
                 this.MessageTextBox.Clear();
                 WriteEquipmentInfo();
             }
@@ -331,13 +359,86 @@ namespace FatClient
             if (selectedIndex != -1)
             {
                 string title = this.TitleTextBox.Text.Trim();
+                string description = this.DescriptionTextBox.Text.Trim();
                 string content = this.MessageTextBox.Text.Trim();
                 if (!string.IsNullOrEmpty(content))
                 {
-                    var updatedCmd = new CommandInfo { Title = title, Content = content };
+                    var updatedCmd = new CommandInfo { Title = title, Description = description, Content = content };
                     commandListBox.Items[selectedIndex] = updatedCmd;
                     commandListBox.SelectedIndex = selectedIndex;
                     WriteEquipmentInfo();
+                }
+            }
+        }
+
+        protected override void OnVisibleChanged(EventArgs e)
+        {
+            base.OnVisibleChanged(e);
+            if (isFirstLayout && this.Visible && this.Height > 0)
+            {
+                if (RestoreSplitterDistance())
+                {
+                    isFirstLayout = false;
+                }
+            }
+        }
+
+        protected override void OnLayout(LayoutEventArgs e)
+        {
+            base.OnLayout(e);
+            if (isFirstLayout && this.Visible && this.Height > 0)
+            {
+                if (RestoreSplitterDistance())
+                {
+                    isFirstLayout = false;
+                }
+            }
+        }
+
+        private bool RestoreSplitterDistance()
+        {
+            if (this.equipment != null && this.equipment.info != null && !string.IsNullOrEmpty(this.equipment.info.name))
+            {
+                string name = this.equipment.info.name;
+                if (LayoutSettingsManager.Settings.EquipmentSplitterDistances.ContainsKey(name))
+                {
+                    int dist = LayoutSettingsManager.Settings.EquipmentSplitterDistances[name];
+                    try
+                    {
+                        int min = commandInputSplitContainer.Panel1MinSize;
+                        int max = commandInputSplitContainer.Height - commandInputSplitContainer.Panel2MinSize;
+                        if (dist >= min && dist <= max)
+                        {
+                            isRestoring = true;
+                            commandInputSplitContainer.SplitterDistance = dist;
+                            isRestoring = false;
+                            return true;
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        isRestoring = false;
+                    }
+                }
+                else
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private void commandInputSplitContainer_SplitterMoved(object sender, SplitterEventArgs e)
+        {
+            if (isRestoring) return;
+
+            if (this.equipment != null && this.equipment.info != null && !string.IsNullOrEmpty(this.equipment.info.name))
+            {
+                LayoutSettingsManager.Settings.EquipmentSplitterDistances[this.equipment.info.name] = commandInputSplitContainer.SplitterDistance;
+                if (saveTimer != null)
+                {
+                    saveTimer.Stop();
+                    saveTimer.Start();
                 }
             }
         }

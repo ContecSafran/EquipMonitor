@@ -60,6 +60,10 @@ namespace FatClient
             this.commandTitleLayout = new System.Windows.Forms.TableLayoutPanel();
             this.commandTitleLabel = new System.Windows.Forms.Label();
             this.TitleTextBox = new System.Windows.Forms.TextBox();
+            this.commandInputSplitContainer = new System.Windows.Forms.SplitContainer();
+            this.commandDescLayout = new System.Windows.Forms.TableLayoutPanel();
+            this.commandDescLabel = new System.Windows.Forms.Label();
+            this.DescriptionTextBox = new System.Windows.Forms.TextBox();
             this.MessageTextBox = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.SendMessageButton = new System.Windows.Forms.Button();
@@ -75,6 +79,11 @@ namespace FatClient
             this.commandButtonsLayout.SuspendLayout();
             this.commandInputLayout.SuspendLayout();
             this.commandTitleLayout.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.commandInputSplitContainer)).BeginInit();
+            this.commandInputSplitContainer.Panel1.SuspendLayout();
+            this.commandInputSplitContainer.Panel2.SuspendLayout();
+            this.commandInputSplitContainer.SuspendLayout();
+            this.commandDescLayout.SuspendLayout();
             this.logTableLayoutPanel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -417,7 +426,7 @@ namespace FatClient
             this.commandInputLayout.ColumnCount = 1;
             this.commandInputLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.commandInputLayout.Controls.Add(this.commandTitleLayout, 0, 0);
-            this.commandInputLayout.Controls.Add(this.MessageTextBox, 0, 1);
+            this.commandInputLayout.Controls.Add(this.commandInputSplitContainer, 0, 1);
             this.commandInputLayout.Dock = System.Windows.Forms.DockStyle.Fill;
             this.commandInputLayout.Location = new System.Drawing.Point(277, 0);
             this.commandInputLayout.Margin = new System.Windows.Forms.Padding(0);
@@ -463,14 +472,71 @@ namespace FatClient
             this.TitleTextBox.Size = new System.Drawing.Size(591, 21);
             this.TitleTextBox.TabIndex = 1;
             // 
+            // commandInputSplitContainer
+            // 
+            this.commandInputSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.commandInputSplitContainer.Location = new System.Drawing.Point(3, 33);
+            this.commandInputSplitContainer.Name = "commandInputSplitContainer";
+            this.commandInputSplitContainer.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // commandInputSplitContainer.Panel1
+            // 
+            this.commandInputSplitContainer.Panel1.Controls.Add(this.commandDescLayout);
+            // 
+            // commandInputSplitContainer.Panel2
+            // 
+            this.commandInputSplitContainer.Panel2.Controls.Add(this.MessageTextBox);
+            this.commandInputSplitContainer.Size = new System.Drawing.Size(641, 124);
+            this.commandInputSplitContainer.SplitterDistance = 62;
+            this.commandInputSplitContainer.TabIndex = 12;
+            this.commandInputSplitContainer.SplitterMoved += new System.Windows.Forms.SplitterEventHandler(this.commandInputSplitContainer_SplitterMoved);
+            // 
+            // commandDescLayout
+            // 
+            this.commandDescLayout.ColumnCount = 2;
+            this.commandDescLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 50F));
+            this.commandDescLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.commandDescLayout.Controls.Add(this.commandDescLabel, 0, 0);
+            this.commandDescLayout.Controls.Add(this.DescriptionTextBox, 1, 0);
+            this.commandDescLayout.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.commandDescLayout.Location = new System.Drawing.Point(0, 0);
+            this.commandDescLayout.Margin = new System.Windows.Forms.Padding(0);
+            this.commandDescLayout.Name = "commandDescLayout";
+            this.commandDescLayout.RowCount = 1;
+            this.commandDescLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.commandDescLayout.Size = new System.Drawing.Size(641, 62);
+            this.commandDescLayout.TabIndex = 1;
+            // 
+            // commandDescLabel
+            // 
+            this.commandDescLabel.AutoSize = true;
+            this.commandDescLabel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.commandDescLabel.Location = new System.Drawing.Point(3, 0);
+            this.commandDescLabel.Name = "commandDescLabel";
+            this.commandDescLabel.Padding = new System.Windows.Forms.Padding(0, 5, 0, 0);
+            this.commandDescLabel.Size = new System.Drawing.Size(44, 62);
+            this.commandDescLabel.TabIndex = 0;
+            this.commandDescLabel.Text = "설명:";
+            this.commandDescLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
+            // DescriptionTextBox
+            // 
+            this.DescriptionTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.DescriptionTextBox.Location = new System.Drawing.Point(53, 3);
+            this.DescriptionTextBox.Multiline = true;
+            this.DescriptionTextBox.Name = "DescriptionTextBox";
+            this.DescriptionTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.DescriptionTextBox.Size = new System.Drawing.Size(585, 56);
+            this.DescriptionTextBox.TabIndex = 1;
+            // 
             // MessageTextBox
             // 
             this.MessageTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.MessageTextBox.Location = new System.Drawing.Point(3, 33);
+            this.MessageTextBox.Location = new System.Drawing.Point(0, 0);
             this.MessageTextBox.Multiline = true;
             this.MessageTextBox.Name = "MessageTextBox";
             this.MessageTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.MessageTextBox.Size = new System.Drawing.Size(641, 124);
+            this.MessageTextBox.Size = new System.Drawing.Size(641, 58);
             this.MessageTextBox.TabIndex = 2;
             // 
             // label1
@@ -550,9 +616,15 @@ namespace FatClient
             this.commandListManageLayout.ResumeLayout(false);
             this.commandButtonsLayout.ResumeLayout(false);
             this.commandInputLayout.ResumeLayout(false);
-            this.commandInputLayout.PerformLayout();
             this.commandTitleLayout.ResumeLayout(false);
             this.commandTitleLayout.PerformLayout();
+            this.commandInputSplitContainer.Panel1.ResumeLayout(false);
+            this.commandInputSplitContainer.Panel2.ResumeLayout(false);
+            this.commandInputSplitContainer.Panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.commandInputSplitContainer)).EndInit();
+            this.commandInputSplitContainer.ResumeLayout(false);
+            this.commandDescLayout.ResumeLayout(false);
+            this.commandDescLayout.PerformLayout();
             this.logTableLayoutPanel.ResumeLayout(false);
             this.logTableLayoutPanel.PerformLayout();
             this.ResumeLayout(false);
@@ -597,5 +669,9 @@ namespace FatClient
         private System.Windows.Forms.TableLayoutPanel commandTitleLayout;
         private System.Windows.Forms.Label commandTitleLabel;
         private System.Windows.Forms.TextBox TitleTextBox;
+        private System.Windows.Forms.TableLayoutPanel commandDescLayout;
+        private System.Windows.Forms.Label commandDescLabel;
+        private System.Windows.Forms.TextBox DescriptionTextBox;
+        private System.Windows.Forms.SplitContainer commandInputSplitContainer;
     }
 }

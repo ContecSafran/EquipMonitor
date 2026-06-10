@@ -8,6 +8,7 @@ namespace FatClient.dto
     public class CommandInfo
     {
         public string Title { get; set; }
+        public string Description { get; set; }
         public string Content { get; set; }
 
         public override string ToString()
@@ -33,6 +34,7 @@ namespace FatClient.dto
                 return new CommandInfo
                 {
                     Title = string.Empty,
+                    Description = string.Empty,
                     Content = reader.GetString()
                 };
             }
@@ -55,6 +57,10 @@ namespace FatClient.dto
                         {
                             commandInfo.Title = reader.GetString();
                         }
+                        else if (string.Equals(propertyName, nameof(CommandInfo.Description), StringComparison.OrdinalIgnoreCase))
+                        {
+                            commandInfo.Description = reader.GetString();
+                        }
                         else if (string.Equals(propertyName, nameof(CommandInfo.Content), StringComparison.OrdinalIgnoreCase))
                         {
                             commandInfo.Content = reader.GetString();
@@ -70,6 +76,7 @@ namespace FatClient.dto
         {
             writer.WriteStartObject();
             writer.WriteString("Title", value.Title ?? string.Empty);
+            writer.WriteString("Description", value.Description ?? string.Empty);
             writer.WriteString("Content", value.Content ?? string.Empty);
             writer.WriteEndObject();
         }

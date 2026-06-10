@@ -121,8 +121,10 @@
     <Compile Include="TcpEquipmentClient.cs" />
     <Compile Include="ClientHandler.cs" />
     <Compile Include="dto\CommandInfo.cs" />
+    <Compile Include="dto\LayoutSettings.cs" />
     <Compile Include="dto\EquipmentInfo.cs" />
     <Compile Include="dto\EquipmentDto.cs" />
+    <Compile Include="LayoutSettingsManager.cs" />
     <Compile Include="Equipment.cs">
       <SubType>UserControl</SubType>
     </Compile>
