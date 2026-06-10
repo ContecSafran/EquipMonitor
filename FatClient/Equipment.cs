@@ -24,6 +24,7 @@ namespace FatClient
             equipment.info.name = "1";
             equipment.ResponseHexTextBox = this.ResponseHexTextBox;
             equipment.ResponseAsciiTextBox = this.ResponseAsciiTextBox;
+            InitConnectionCallback();
         }
         public Equipment(String name)
         {
@@ -31,6 +32,7 @@ namespace FatClient
             equipment.info.name = name;
             equipment.ResponseHexTextBox = this.ResponseHexTextBox;
             equipment.ResponseAsciiTextBox = this.ResponseAsciiTextBox;
+            InitConnectionCallback();
         }
         public Equipment(FileInfo fi)
         {
@@ -38,6 +40,41 @@ namespace FatClient
             ReadEquipmentInfo(fi);
             equipment.ResponseHexTextBox = this.ResponseHexTextBox;
             equipment.ResponseAsciiTextBox = this.ResponseAsciiTextBox;
+            InitConnectionCallback();
+        }
+
+        private void InitConnectionCallback()
+        {
+            equipment.OnConnectionStateChanged = (connected) =>
+            {
+                if (this.InvokeRequired)
+                {
+                    this.Invoke(new Action(() => UpdateStatusUI(connected)));
+                }
+                else
+                {
+                    UpdateStatusUI(connected);
+                }
+            };
+            UpdateStatusUI(false);
+        }
+
+        private void UpdateStatusUI(bool connected)
+        {
+            if (connected)
+            {
+                this.IPLabel.Text = "IP (연결됨)";
+                this.IPLabel.ForeColor = System.Drawing.Color.Green;
+                this.connectButton.BackColor = System.Drawing.Color.LightGreen;
+                this.connectButton.Text = "Connected";
+            }
+            else
+            {
+                this.IPLabel.Text = "IP (연결 안됨)";
+                this.IPLabel.ForeColor = System.Drawing.Color.Red;
+                this.connectButton.BackColor = System.Drawing.SystemColors.Control;
+                this.connectButton.Text = "Connect";
+            }
         }
 
         private async void SendMessageButton_Click(object sender, EventArgs e)
@@ -285,6 +322,23 @@ namespace FatClient
                 this.TitleTextBox.Clear();
                 this.MessageTextBox.Clear();
                 WriteEquipmentInfo();
+            }
+        }
+
+        private void modifyCommandButton_Click(object sender, EventArgs e)
+        {
+            int selectedIndex = commandListBox.SelectedIndex;
+            if (selectedIndex != -1)
+            {
+                string title = this.TitleTextBox.Text.Trim();
+                string content = this.MessageTextBox.Text.Trim();
+                if (!string.IsNullOrEmpty(content))
+                {
+                    var updatedCmd = new CommandInfo { Title = title, Content = content };
+                    commandListBox.Items[selectedIndex] = updatedCmd;
+                    commandListBox.SelectedIndex = selectedIndex;
+                    WriteEquipmentInfo();
+                }
             }
         }
     }

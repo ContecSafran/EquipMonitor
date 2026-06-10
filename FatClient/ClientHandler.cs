@@ -54,5 +54,15 @@ namespace FatClient
             equipmentDto.ReceiveHexResponse(exception.Message);
             context.CloseAsync();
         }
+        public override void ChannelActive(IChannelHandlerContext context)
+        {
+            base.ChannelActive(context);
+            equipmentDto.OnConnectionStateChanged?.Invoke(true);
+        }
+        public override void ChannelInactive(IChannelHandlerContext context)
+        {
+            base.ChannelInactive(context);
+            equipmentDto.OnConnectionStateChanged?.Invoke(false);
+        }
     }
 }

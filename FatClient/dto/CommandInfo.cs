@@ -12,7 +12,15 @@ namespace FatClient.dto
 
         public override string ToString()
         {
-            return string.IsNullOrEmpty(Title) ? Content : $"[{Title}] {Content}";
+            if (!string.IsNullOrEmpty(Title))
+            {
+                return Title;
+            }
+            if (Content != null && Content.Length > 20)
+            {
+                return Content.Substring(0, 20) + "...";
+            }
+            return Content ?? string.Empty;
         }
     }
 

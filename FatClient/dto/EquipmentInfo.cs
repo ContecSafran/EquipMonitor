@@ -33,7 +33,11 @@ namespace FatClient.dto
             get;
             set;
         }
-        public bool isHex;
+        public bool isHex
+        {
+            get;
+            set;
+        }
         public String command
         {
             get;

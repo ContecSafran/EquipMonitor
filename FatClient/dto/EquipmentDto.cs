@@ -13,6 +13,11 @@ namespace FatClient.dto
     public class EquipmentDto
     {
         public EquipmentInfo info = new EquipmentInfo();
+
+        [JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        public Action<bool> OnConnectionStateChanged { get; set; }
+
         public System.Windows.Forms.TextBox ResponseHexTextBox
         {
             get;

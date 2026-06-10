@@ -17,9 +17,11 @@ namespace FatClient
     {
         MultithreadEventLoopGroup group;
         IChannel channel;
+        EquipmentDto equipmentDto;
 
         public async Task ConnectAsync(EquipmentDto equipmentDto)
         {
+            this.equipmentDto = equipmentDto;
             EquipmentInfo info = equipmentDto.info;
             try
             {
@@ -38,6 +40,7 @@ namespace FatClient
 
                     channel = await bootstrap.ConnectAsync(new IPEndPoint(IPAddress.Parse(info.ip), info.port));
                     equipmentDto.ReceiveAsciiResponse("Client connected to server. ip : " + info.ip + " port : " + info.port);
+                    equipmentDto.OnConnectionStateChanged?.Invoke(true);
                 }
             }
             catch (Exception ex)
@@ -130,6 +133,7 @@ namespace FatClient
                 await group.ShutdownGracefullyAsync(TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(1));
                 group = null;
             }
+            this.equipmentDto?.OnConnectionStateChanged?.Invoke(false);
         }
 
         public static byte[] StringToByteArray(string hex)

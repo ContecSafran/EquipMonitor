@@ -54,6 +54,7 @@ namespace FatClient
             this.commandListBox = new System.Windows.Forms.ListBox();
             this.commandButtonsLayout = new System.Windows.Forms.TableLayoutPanel();
             this.addCommandButton = new System.Windows.Forms.Button();
+            this.modifyCommandButton = new System.Windows.Forms.Button();
             this.deleteCommandButton = new System.Windows.Forms.Button();
             this.commandInputLayout = new System.Windows.Forms.TableLayoutPanel();
             this.commandTitleLayout = new System.Windows.Forms.TableLayoutPanel();
@@ -362,11 +363,13 @@ namespace FatClient
             // 
             // commandButtonsLayout
             // 
-            this.commandButtonsLayout.ColumnCount = 2;
-            this.commandButtonsLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.commandButtonsLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.commandButtonsLayout.ColumnCount = 3;
+            this.commandButtonsLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33F));
+            this.commandButtonsLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33F));
+            this.commandButtonsLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.34F));
             this.commandButtonsLayout.Controls.Add(this.addCommandButton, 0, 0);
-            this.commandButtonsLayout.Controls.Add(this.deleteCommandButton, 1, 0);
+            this.commandButtonsLayout.Controls.Add(this.modifyCommandButton, 1, 0);
+            this.commandButtonsLayout.Controls.Add(this.deleteCommandButton, 2, 0);
             this.commandButtonsLayout.Dock = System.Windows.Forms.DockStyle.Fill;
             this.commandButtonsLayout.Location = new System.Drawing.Point(0, 130);
             this.commandButtonsLayout.Margin = new System.Windows.Forms.Padding(0);
@@ -381,18 +384,29 @@ namespace FatClient
             this.addCommandButton.Dock = System.Windows.Forms.DockStyle.Fill;
             this.addCommandButton.Location = new System.Drawing.Point(3, 3);
             this.addCommandButton.Name = "addCommandButton";
-            this.addCommandButton.Size = new System.Drawing.Size(132, 24);
+            this.addCommandButton.Size = new System.Drawing.Size(86, 24);
             this.addCommandButton.TabIndex = 0;
             this.addCommandButton.Text = "추가";
             this.addCommandButton.UseVisualStyleBackColor = true;
             this.addCommandButton.Click += new System.EventHandler(this.addCommandButton_Click);
             // 
+            // modifyCommandButton
+            // 
+            this.modifyCommandButton.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.modifyCommandButton.Location = new System.Drawing.Point(95, 3);
+            this.modifyCommandButton.Name = "modifyCommandButton";
+            this.modifyCommandButton.Size = new System.Drawing.Size(86, 24);
+            this.modifyCommandButton.TabIndex = 2;
+            this.modifyCommandButton.Text = "수정";
+            this.modifyCommandButton.UseVisualStyleBackColor = true;
+            this.modifyCommandButton.Click += new System.EventHandler(this.modifyCommandButton_Click);
+            // 
             // deleteCommandButton
             // 
             this.deleteCommandButton.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.deleteCommandButton.Location = new System.Drawing.Point(141, 3);
+            this.deleteCommandButton.Location = new System.Drawing.Point(187, 3);
             this.deleteCommandButton.Name = "deleteCommandButton";
-            this.deleteCommandButton.Size = new System.Drawing.Size(133, 24);
+            this.deleteCommandButton.Size = new System.Drawing.Size(87, 24);
             this.deleteCommandButton.TabIndex = 1;
             this.deleteCommandButton.Text = "삭제";
             this.deleteCommandButton.UseVisualStyleBackColor = true;
@@ -427,7 +441,7 @@ namespace FatClient
             this.commandTitleLayout.Name = "commandTitleLayout";
             this.commandTitleLayout.RowCount = 1;
             this.commandTitleLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.commandTitleLayout.Size = new System.Drawing.Size(641, 30);
+            this.commandTitleLayout.Size = new System.Drawing.Size(647, 30);
             this.commandTitleLayout.TabIndex = 0;
             // 
             // commandTitleLabel
@@ -446,7 +460,7 @@ namespace FatClient
             this.TitleTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.TitleTextBox.Location = new System.Drawing.Point(53, 3);
             this.TitleTextBox.Name = "TitleTextBox";
-            this.TitleTextBox.Size = new System.Drawing.Size(585, 21);
+            this.TitleTextBox.Size = new System.Drawing.Size(591, 21);
             this.TitleTextBox.TabIndex = 1;
             // 
             // MessageTextBox
@@ -456,7 +470,7 @@ namespace FatClient
             this.MessageTextBox.Multiline = true;
             this.MessageTextBox.Name = "MessageTextBox";
             this.MessageTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.MessageTextBox.Size = new System.Drawing.Size(635, 118);
+            this.MessageTextBox.Size = new System.Drawing.Size(641, 124);
             this.MessageTextBox.TabIndex = 2;
             // 
             // label1
@@ -577,6 +591,7 @@ namespace FatClient
         private System.Windows.Forms.ListBox commandListBox;
         private System.Windows.Forms.TableLayoutPanel commandButtonsLayout;
         private System.Windows.Forms.Button addCommandButton;
+        private System.Windows.Forms.Button modifyCommandButton;
         private System.Windows.Forms.Button deleteCommandButton;
         private System.Windows.Forms.TableLayoutPanel commandInputLayout;
         private System.Windows.Forms.TableLayoutPanel commandTitleLayout;
