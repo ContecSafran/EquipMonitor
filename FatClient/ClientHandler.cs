@@ -1,4 +1,4 @@
-﻿using DotNetty.Buffers;
+using DotNetty.Buffers;
 using DotNetty.Transport.Channels;
 using FatClient.dto;
 using System;

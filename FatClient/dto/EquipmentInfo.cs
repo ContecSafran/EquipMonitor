@@ -39,11 +39,11 @@ namespace FatClient.dto
             get;
             set;
         }
-        public List<string> commands
+        public List<CommandInfo> commands
         {
             get;
             set;
-        } = new List<string>();
+        } = new List<CommandInfo>();
         public String tail
         {
             get;

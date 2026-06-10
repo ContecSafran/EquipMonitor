@@ -55,6 +55,10 @@ namespace FatClient
             this.commandButtonsLayout = new System.Windows.Forms.TableLayoutPanel();
             this.addCommandButton = new System.Windows.Forms.Button();
             this.deleteCommandButton = new System.Windows.Forms.Button();
+            this.commandInputLayout = new System.Windows.Forms.TableLayoutPanel();
+            this.commandTitleLayout = new System.Windows.Forms.TableLayoutPanel();
+            this.commandTitleLabel = new System.Windows.Forms.Label();
+            this.TitleTextBox = new System.Windows.Forms.TextBox();
             this.MessageTextBox = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.SendMessageButton = new System.Windows.Forms.Button();
@@ -68,6 +72,8 @@ namespace FatClient
             this.commandLayout.SuspendLayout();
             this.commandListManageLayout.SuspendLayout();
             this.commandButtonsLayout.SuspendLayout();
+            this.commandInputLayout.SuspendLayout();
+            this.commandTitleLayout.SuspendLayout();
             this.logTableLayoutPanel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -318,7 +324,7 @@ namespace FatClient
             this.commandLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30F));
             this.commandLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 70F));
             this.commandLayout.Controls.Add(this.commandListManageLayout, 0, 0);
-            this.commandLayout.Controls.Add(this.MessageTextBox, 1, 0);
+            this.commandLayout.Controls.Add(this.commandInputLayout, 1, 0);
             this.commandLayout.Dock = System.Windows.Forms.DockStyle.Fill;
             this.commandLayout.Location = new System.Drawing.Point(3, 93);
             this.commandLayout.Name = "commandLayout";
@@ -392,15 +398,66 @@ namespace FatClient
             this.deleteCommandButton.UseVisualStyleBackColor = true;
             this.deleteCommandButton.Click += new System.EventHandler(this.deleteCommandButton_Click);
             // 
+            // commandInputLayout
+            // 
+            this.commandInputLayout.ColumnCount = 1;
+            this.commandInputLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.commandInputLayout.Controls.Add(this.commandTitleLayout, 0, 0);
+            this.commandInputLayout.Controls.Add(this.MessageTextBox, 0, 1);
+            this.commandInputLayout.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.commandInputLayout.Location = new System.Drawing.Point(277, 0);
+            this.commandInputLayout.Margin = new System.Windows.Forms.Padding(0);
+            this.commandInputLayout.Name = "commandInputLayout";
+            this.commandInputLayout.RowCount = 2;
+            this.commandInputLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
+            this.commandInputLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.commandInputLayout.Size = new System.Drawing.Size(647, 160);
+            this.commandInputLayout.TabIndex = 11;
+            // 
+            // commandTitleLayout
+            // 
+            this.commandTitleLayout.ColumnCount = 2;
+            this.commandTitleLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 50F));
+            this.commandTitleLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.commandTitleLayout.Controls.Add(this.commandTitleLabel, 0, 0);
+            this.commandTitleLayout.Controls.Add(this.TitleTextBox, 1, 0);
+            this.commandTitleLayout.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.commandTitleLayout.Location = new System.Drawing.Point(0, 0);
+            this.commandTitleLayout.Margin = new System.Windows.Forms.Padding(0);
+            this.commandTitleLayout.Name = "commandTitleLayout";
+            this.commandTitleLayout.RowCount = 1;
+            this.commandTitleLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.commandTitleLayout.Size = new System.Drawing.Size(641, 30);
+            this.commandTitleLayout.TabIndex = 0;
+            // 
+            // commandTitleLabel
+            // 
+            this.commandTitleLabel.AutoSize = true;
+            this.commandTitleLabel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.commandTitleLabel.Location = new System.Drawing.Point(3, 0);
+            this.commandTitleLabel.Name = "commandTitleLabel";
+            this.commandTitleLabel.Size = new System.Drawing.Size(44, 30);
+            this.commandTitleLabel.TabIndex = 0;
+            this.commandTitleLabel.Text = "제목:";
+            this.commandTitleLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // TitleTextBox
+            // 
+            this.TitleTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.TitleTextBox.Location = new System.Drawing.Point(53, 3);
+            this.TitleTextBox.Name = "TitleTextBox";
+            this.TitleTextBox.Size = new System.Drawing.Size(585, 21);
+            this.TitleTextBox.TabIndex = 1;
+            // 
             // MessageTextBox
             // 
             this.MessageTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.MessageTextBox.Location = new System.Drawing.Point(280, 3);
+            this.MessageTextBox.Location = new System.Drawing.Point(3, 33);
             this.MessageTextBox.Multiline = true;
             this.MessageTextBox.Name = "MessageTextBox";
             this.MessageTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.MessageTextBox.Size = new System.Drawing.Size(641, 154);
-            this.MessageTextBox.TabIndex = 11;
+            this.MessageTextBox.Size = new System.Drawing.Size(635, 118);
+            this.MessageTextBox.TabIndex = 2;
             // 
             // label1
             // 
@@ -476,9 +533,12 @@ namespace FatClient
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             this.commandLayout.ResumeLayout(false);
-            this.commandLayout.PerformLayout();
             this.commandListManageLayout.ResumeLayout(false);
             this.commandButtonsLayout.ResumeLayout(false);
+            this.commandInputLayout.ResumeLayout(false);
+            this.commandInputLayout.PerformLayout();
+            this.commandTitleLayout.ResumeLayout(false);
+            this.commandTitleLayout.PerformLayout();
             this.logTableLayoutPanel.ResumeLayout(false);
             this.logTableLayoutPanel.PerformLayout();
             this.ResumeLayout(false);
@@ -518,5 +578,9 @@ namespace FatClient
         private System.Windows.Forms.TableLayoutPanel commandButtonsLayout;
         private System.Windows.Forms.Button addCommandButton;
         private System.Windows.Forms.Button deleteCommandButton;
+        private System.Windows.Forms.TableLayoutPanel commandInputLayout;
+        private System.Windows.Forms.TableLayoutPanel commandTitleLayout;
+        private System.Windows.Forms.Label commandTitleLabel;
+        private System.Windows.Forms.TextBox TitleTextBox;
     }
 }

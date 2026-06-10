@@ -78,7 +78,14 @@ namespace FatClient
             this.equipment.info.commands.Clear();
             foreach (var item in this.commandListBox.Items)
             {
-                this.equipment.info.commands.Add(item.ToString());
+                if (item is CommandInfo cmdInfo)
+                {
+                    this.equipment.info.commands.Add(cmdInfo);
+                }
+                else if (item != null)
+                {
+                    this.equipment.info.commands.Add(new CommandInfo { Title = string.Empty, Content = item.ToString() });
+                }
             }
 
             this.equipment.info.command = this.MessageTextBox.Text;
@@ -128,14 +135,14 @@ namespace FatClient
             this.commandListBox.Items.Clear();
             if (this.equipment.info.commands != null && this.equipment.info.commands.Count > 0)
             {
-                foreach (string cmd in this.equipment.info.commands)
+                foreach (CommandInfo cmd in this.equipment.info.commands)
                 {
                     this.commandListBox.Items.Add(cmd);
                 }
             }
             else if (!string.IsNullOrEmpty(this.equipment.info.command))
             {
-                this.commandListBox.Items.Add(this.equipment.info.command);
+                this.commandListBox.Items.Add(new CommandInfo { Title = string.Empty, Content = this.equipment.info.command });
             }
 
             this.MessageTextBox.Text = this.equipment.info.command;
@@ -225,20 +232,47 @@ namespace FatClient
         {
             if (commandListBox.SelectedIndex != -1)
             {
-                this.MessageTextBox.Text = commandListBox.SelectedItem.ToString();
+                if (commandListBox.SelectedItem is CommandInfo cmdInfo)
+                {
+                    this.TitleTextBox.Text = cmdInfo.Title;
+                    this.MessageTextBox.Text = cmdInfo.Content;
+                }
+                else if (commandListBox.SelectedItem != null)
+                {
+                    this.TitleTextBox.Text = string.Empty;
+                    this.MessageTextBox.Text = commandListBox.SelectedItem.ToString();
+                }
             }
         }
 
         private void addCommandButton_Click(object sender, EventArgs e)
         {
-            string newCommand = this.MessageTextBox.Text.Trim();
-            if (!string.IsNullOrEmpty(newCommand))
+            string title = this.TitleTextBox.Text.Trim();
+            string content = this.MessageTextBox.Text.Trim();
+            if (!string.IsNullOrEmpty(content))
             {
-                if (!commandListBox.Items.Contains(newCommand))
+                bool exists = false;
+                CommandInfo matchedItem = null;
+                foreach (var item in commandListBox.Items)
                 {
-                    commandListBox.Items.Add(newCommand);
-                    commandListBox.SelectedItem = newCommand;
+                    if (item is CommandInfo cmdInfo && cmdInfo.Title == title && cmdInfo.Content == content)
+                    {
+                        exists = true;
+                        matchedItem = cmdInfo;
+                        break;
+                    }
+                }
+
+                if (!exists)
+                {
+                    var newCmd = new CommandInfo { Title = title, Content = content };
+                    commandListBox.Items.Add(newCmd);
+                    commandListBox.SelectedItem = newCmd;
                     WriteEquipmentInfo();
+                }
+                else
+                {
+                    commandListBox.SelectedItem = matchedItem;
                 }
             }
         }
@@ -248,6 +282,7 @@ namespace FatClient
             if (commandListBox.SelectedIndex != -1)
             {
                 commandListBox.Items.RemoveAt(commandListBox.SelectedIndex);
+                this.TitleTextBox.Clear();
                 this.MessageTextBox.Clear();
                 WriteEquipmentInfo();
             }

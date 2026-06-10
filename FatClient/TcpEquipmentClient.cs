@@ -33,15 +33,7 @@ namespace FatClient
                              .Handler(new ActionChannelInitializer<ISocketChannel>(ctx =>
                              {
                                  var pipeline = ctx.Pipeline;
-                                 if (info.isHex)
-                                 {
-                                     pipeline.AddLast(new LengthFieldBasedFrameDecoder(100000, 4, 4, -8, 0));
-                                     pipeline.AddLast(new SafranByteToMessageDecoder(equipmentDto));
-                                 }
-                                 else
-                                 {
-                                     pipeline.AddLast(new ClientHandler(equipmentDto));
-                                 }
+                                 pipeline.AddLast(new ClientHandler(equipmentDto));
                              }));
 
                     channel = await bootstrap.ConnectAsync(new IPEndPoint(IPAddress.Parse(info.ip), info.port));
