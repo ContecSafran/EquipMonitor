@@ -74,6 +74,13 @@ namespace FatClient
                 return;
             }
             this.equipment.info.isHex = this.isHexMassage.Checked;
+            
+            this.equipment.info.commands.Clear();
+            foreach (var item in this.commandListBox.Items)
+            {
+                this.equipment.info.commands.Add(item.ToString());
+            }
+
             this.equipment.info.command = this.MessageTextBox.Text;
             this.equipment.info.clientType = this.tcpRadio.Checked ? constants.ClientType.TCP : constants.ClientType.UDP;
             this.equipment.info.tail = this.tailTextBox.Text;
@@ -117,6 +124,20 @@ namespace FatClient
                 this.tcpRadio.Checked = false;
                 this.udpRadio.Checked = true;
             }
+
+            this.commandListBox.Items.Clear();
+            if (this.equipment.info.commands != null && this.equipment.info.commands.Count > 0)
+            {
+                foreach (string cmd in this.equipment.info.commands)
+                {
+                    this.commandListBox.Items.Add(cmd);
+                }
+            }
+            else if (!string.IsNullOrEmpty(this.equipment.info.command))
+            {
+                this.commandListBox.Items.Add(this.equipment.info.command);
+            }
+
             this.MessageTextBox.Text = this.equipment.info.command;
         }
         byte[] cumstomData = null;
@@ -197,6 +218,38 @@ namespace FatClient
             {
                 await tcpClient.CloseAsync();
                 equipment.ReceiveAsciiResponse("TCP 연결이 해제되었습니다.");
+            }
+        }
+
+        private void commandListBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (commandListBox.SelectedIndex != -1)
+            {
+                this.MessageTextBox.Text = commandListBox.SelectedItem.ToString();
+            }
+        }
+
+        private void addCommandButton_Click(object sender, EventArgs e)
+        {
+            string newCommand = this.MessageTextBox.Text.Trim();
+            if (!string.IsNullOrEmpty(newCommand))
+            {
+                if (!commandListBox.Items.Contains(newCommand))
+                {
+                    commandListBox.Items.Add(newCommand);
+                    commandListBox.SelectedItem = newCommand;
+                    WriteEquipmentInfo();
+                }
+            }
+        }
+
+        private void deleteCommandButton_Click(object sender, EventArgs e)
+        {
+            if (commandListBox.SelectedIndex != -1)
+            {
+                commandListBox.Items.RemoveAt(commandListBox.SelectedIndex);
+                this.MessageTextBox.Clear();
+                WriteEquipmentInfo();
             }
         }
     }

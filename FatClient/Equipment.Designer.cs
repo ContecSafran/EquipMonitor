@@ -32,7 +32,7 @@ namespace FatClient
             this.EquipmentTableLayout = new System.Windows.Forms.TableLayoutPanel();
             this.disconnectButton = new System.Windows.Forms.Button();
             this.connectButton = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
+            this.sendBinaryFileButton = new System.Windows.Forms.Button();
             this.tailTextBox = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
@@ -47,8 +47,14 @@ namespace FatClient
             this.isAsciiMassage = new System.Windows.Forms.RadioButton();
             this.isHexMassage = new System.Windows.Forms.RadioButton();
             this.label2 = new System.Windows.Forms.Label();
-            this.button1 = new System.Windows.Forms.Button();
+            this.selectBinaryFileButton = new System.Windows.Forms.Button();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.commandLayout = new System.Windows.Forms.TableLayoutPanel();
+            this.commandListManageLayout = new System.Windows.Forms.TableLayoutPanel();
+            this.commandListBox = new System.Windows.Forms.ListBox();
+            this.commandButtonsLayout = new System.Windows.Forms.TableLayoutPanel();
+            this.addCommandButton = new System.Windows.Forms.Button();
+            this.deleteCommandButton = new System.Windows.Forms.Button();
             this.MessageTextBox = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.SendMessageButton = new System.Windows.Forms.Button();
@@ -59,6 +65,9 @@ namespace FatClient
             this.panel2.SuspendLayout();
             this.panel1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
+            this.commandLayout.SuspendLayout();
+            this.commandListManageLayout.SuspendLayout();
+            this.commandButtonsLayout.SuspendLayout();
             this.logTableLayoutPanel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -70,12 +79,12 @@ namespace FatClient
             this.EquipmentTableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 130F));
             this.EquipmentTableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 130F));
             this.EquipmentTableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 150F));
-            this.EquipmentTableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 107F));
-            this.EquipmentTableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 220F));
+            this.EquipmentTableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 128F));
+            this.EquipmentTableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 199F));
             this.EquipmentTableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.EquipmentTableLayout.Controls.Add(this.disconnectButton, 6, 1);
             this.EquipmentTableLayout.Controls.Add(this.connectButton, 6, 0);
-            this.EquipmentTableLayout.Controls.Add(this.button2, 5, 1);
+            this.EquipmentTableLayout.Controls.Add(this.sendBinaryFileButton, 5, 1);
             this.EquipmentTableLayout.Controls.Add(this.tailTextBox, 4, 1);
             this.EquipmentTableLayout.Controls.Add(this.label4, 4, 0);
             this.EquipmentTableLayout.Controls.Add(this.panel2, 2, 1);
@@ -86,7 +95,7 @@ namespace FatClient
             this.EquipmentTableLayout.Controls.Add(this.IPLabel, 0, 0);
             this.EquipmentTableLayout.Controls.Add(this.panel1, 3, 1);
             this.EquipmentTableLayout.Controls.Add(this.label2, 3, 0);
-            this.EquipmentTableLayout.Controls.Add(this.button1, 5, 0);
+            this.EquipmentTableLayout.Controls.Add(this.selectBinaryFileButton, 5, 0);
             this.EquipmentTableLayout.Dock = System.Windows.Forms.DockStyle.Fill;
             this.EquipmentTableLayout.Location = new System.Drawing.Point(3, 3);
             this.EquipmentTableLayout.Name = "EquipmentTableLayout";
@@ -98,7 +107,7 @@ namespace FatClient
             // 
             // disconnectButton
             // 
-            this.disconnectButton.Location = new System.Drawing.Point(820, 32);
+            this.disconnectButton.Location = new System.Drawing.Point(841, 32);
             this.disconnectButton.Name = "disconnectButton";
             this.disconnectButton.Size = new System.Drawing.Size(98, 23);
             this.disconnectButton.TabIndex = 21;
@@ -108,7 +117,7 @@ namespace FatClient
             // 
             // connectButton
             // 
-            this.connectButton.Location = new System.Drawing.Point(820, 3);
+            this.connectButton.Location = new System.Drawing.Point(841, 3);
             this.connectButton.Name = "connectButton";
             this.connectButton.Size = new System.Drawing.Size(98, 23);
             this.connectButton.TabIndex = 20;
@@ -116,15 +125,15 @@ namespace FatClient
             this.connectButton.UseVisualStyleBackColor = true;
             this.connectButton.Click += new System.EventHandler(this.connectButton_Click);
             // 
-            // button2
+            // sendBinaryFileButton
             // 
-            this.button2.Location = new System.Drawing.Point(713, 32);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 19);
-            this.button2.TabIndex = 19;
-            this.button2.Text = "button2";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_ClickAsync);
+            this.sendBinaryFileButton.Location = new System.Drawing.Point(713, 32);
+            this.sendBinaryFileButton.Name = "sendBinaryFileButton";
+            this.sendBinaryFileButton.Size = new System.Drawing.Size(122, 23);
+            this.sendBinaryFileButton.TabIndex = 19;
+            this.sendBinaryFileButton.Text = "선택된 파일 전송";
+            this.sendBinaryFileButton.UseVisualStyleBackColor = true;
+            this.sendBinaryFileButton.Click += new System.EventHandler(this.button2_ClickAsync);
             // 
             // tailTextBox
             // 
@@ -269,21 +278,23 @@ namespace FatClient
             this.label2.Text = "메시지 타입";
             this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // button1
+            // selectBinaryFileButton
             // 
-            this.button1.Location = new System.Drawing.Point(713, 3);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 18;
-            this.button1.Text = "button1";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.selectBinaryFileButton.AutoSize = true;
+            this.selectBinaryFileButton.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.selectBinaryFileButton.Location = new System.Drawing.Point(713, 3);
+            this.selectBinaryFileButton.Name = "selectBinaryFileButton";
+            this.selectBinaryFileButton.Size = new System.Drawing.Size(122, 23);
+            this.selectBinaryFileButton.TabIndex = 18;
+            this.selectBinaryFileButton.Text = "바이너리 파일 선택";
+            this.selectBinaryFileButton.UseVisualStyleBackColor = true;
+            this.selectBinaryFileButton.Click += new System.EventHandler(this.button1_Click);
             // 
             // tableLayoutPanel1
             // 
             this.tableLayoutPanel1.ColumnCount = 1;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Controls.Add(this.MessageTextBox, 0, 2);
+            this.tableLayoutPanel1.Controls.Add(this.commandLayout, 0, 2);
             this.tableLayoutPanel1.Controls.Add(this.label1, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.EquipmentTableLayout, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.SendMessageButton, 0, 3);
@@ -294,21 +305,101 @@ namespace FatClient
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 5;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 70F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 60F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(930, 452);
             this.tableLayoutPanel1.TabIndex = 3;
             // 
+            // commandLayout
+            // 
+            this.commandLayout.ColumnCount = 2;
+            this.commandLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30F));
+            this.commandLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 70F));
+            this.commandLayout.Controls.Add(this.commandListManageLayout, 0, 0);
+            this.commandLayout.Controls.Add(this.MessageTextBox, 1, 0);
+            this.commandLayout.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.commandLayout.Location = new System.Drawing.Point(3, 93);
+            this.commandLayout.Name = "commandLayout";
+            this.commandLayout.RowCount = 1;
+            this.commandLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.commandLayout.Size = new System.Drawing.Size(924, 160);
+            this.commandLayout.TabIndex = 12;
+            // 
+            // commandListManageLayout
+            // 
+            this.commandListManageLayout.ColumnCount = 1;
+            this.commandListManageLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.commandListManageLayout.Controls.Add(this.commandListBox, 0, 0);
+            this.commandListManageLayout.Controls.Add(this.commandButtonsLayout, 0, 1);
+            this.commandListManageLayout.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.commandListManageLayout.Location = new System.Drawing.Point(0, 0);
+            this.commandListManageLayout.Margin = new System.Windows.Forms.Padding(0);
+            this.commandListManageLayout.Name = "commandListManageLayout";
+            this.commandListManageLayout.RowCount = 2;
+            this.commandListManageLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.commandListManageLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
+            this.commandListManageLayout.Size = new System.Drawing.Size(277, 160);
+            this.commandListManageLayout.TabIndex = 0;
+            // 
+            // commandListBox
+            // 
+            this.commandListBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.commandListBox.FormattingEnabled = true;
+            this.commandListBox.ItemHeight = 12;
+            this.commandListBox.Location = new System.Drawing.Point(3, 3);
+            this.commandListBox.Name = "commandListBox";
+            this.commandListBox.Size = new System.Drawing.Size(271, 124);
+            this.commandListBox.TabIndex = 0;
+            this.commandListBox.SelectedIndexChanged += new System.EventHandler(this.commandListBox_SelectedIndexChanged);
+            // 
+            // commandButtonsLayout
+            // 
+            this.commandButtonsLayout.ColumnCount = 2;
+            this.commandButtonsLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.commandButtonsLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.commandButtonsLayout.Controls.Add(this.addCommandButton, 0, 0);
+            this.commandButtonsLayout.Controls.Add(this.deleteCommandButton, 1, 0);
+            this.commandButtonsLayout.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.commandButtonsLayout.Location = new System.Drawing.Point(0, 130);
+            this.commandButtonsLayout.Margin = new System.Windows.Forms.Padding(0);
+            this.commandButtonsLayout.Name = "commandButtonsLayout";
+            this.commandButtonsLayout.RowCount = 1;
+            this.commandButtonsLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.commandButtonsLayout.Size = new System.Drawing.Size(277, 30);
+            this.commandButtonsLayout.TabIndex = 1;
+            // 
+            // addCommandButton
+            // 
+            this.addCommandButton.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.addCommandButton.Location = new System.Drawing.Point(3, 3);
+            this.addCommandButton.Name = "addCommandButton";
+            this.addCommandButton.Size = new System.Drawing.Size(132, 24);
+            this.addCommandButton.TabIndex = 0;
+            this.addCommandButton.Text = "추가";
+            this.addCommandButton.UseVisualStyleBackColor = true;
+            this.addCommandButton.Click += new System.EventHandler(this.addCommandButton_Click);
+            // 
+            // deleteCommandButton
+            // 
+            this.deleteCommandButton.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.deleteCommandButton.Location = new System.Drawing.Point(141, 3);
+            this.deleteCommandButton.Name = "deleteCommandButton";
+            this.deleteCommandButton.Size = new System.Drawing.Size(133, 24);
+            this.deleteCommandButton.TabIndex = 1;
+            this.deleteCommandButton.Text = "삭제";
+            this.deleteCommandButton.UseVisualStyleBackColor = true;
+            this.deleteCommandButton.Click += new System.EventHandler(this.deleteCommandButton_Click);
+            // 
             // MessageTextBox
             // 
             this.MessageTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.MessageTextBox.Location = new System.Drawing.Point(3, 103);
+            this.MessageTextBox.Location = new System.Drawing.Point(280, 3);
             this.MessageTextBox.Multiline = true;
             this.MessageTextBox.Name = "MessageTextBox";
             this.MessageTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.MessageTextBox.Size = new System.Drawing.Size(924, 140);
+            this.MessageTextBox.Size = new System.Drawing.Size(641, 154);
             this.MessageTextBox.TabIndex = 11;
             // 
             // label1
@@ -317,7 +408,7 @@ namespace FatClient
             this.label1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label1.Location = new System.Drawing.Point(3, 70);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(924, 30);
+            this.label1.Size = new System.Drawing.Size(924, 20);
             this.label1.TabIndex = 8;
             this.label1.Text = "Message";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -325,10 +416,10 @@ namespace FatClient
             // SendMessageButton
             // 
             this.SendMessageButton.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.SendMessageButton.Location = new System.Drawing.Point(0, 246);
+            this.SendMessageButton.Location = new System.Drawing.Point(0, 256);
             this.SendMessageButton.Margin = new System.Windows.Forms.Padding(0);
             this.SendMessageButton.Name = "SendMessageButton";
-            this.SendMessageButton.Size = new System.Drawing.Size(930, 60);
+            this.SendMessageButton.Size = new System.Drawing.Size(930, 30);
             this.SendMessageButton.TabIndex = 9;
             this.SendMessageButton.Text = "메시지 전송";
             this.SendMessageButton.UseVisualStyleBackColor = true;
@@ -342,11 +433,11 @@ namespace FatClient
             this.logTableLayoutPanel.Controls.Add(this.ResponseAsciiTextBox, 1, 0);
             this.logTableLayoutPanel.Controls.Add(this.ResponseHexTextBox, 0, 0);
             this.logTableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.logTableLayoutPanel.Location = new System.Drawing.Point(3, 309);
+            this.logTableLayoutPanel.Location = new System.Drawing.Point(3, 289);
             this.logTableLayoutPanel.Name = "logTableLayoutPanel";
             this.logTableLayoutPanel.RowCount = 1;
             this.logTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.logTableLayoutPanel.Size = new System.Drawing.Size(924, 140);
+            this.logTableLayoutPanel.Size = new System.Drawing.Size(924, 160);
             this.logTableLayoutPanel.TabIndex = 12;
             // 
             // ResponseAsciiTextBox
@@ -356,7 +447,7 @@ namespace FatClient
             this.ResponseAsciiTextBox.Multiline = true;
             this.ResponseAsciiTextBox.Name = "ResponseAsciiTextBox";
             this.ResponseAsciiTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.ResponseAsciiTextBox.Size = new System.Drawing.Size(456, 134);
+            this.ResponseAsciiTextBox.Size = new System.Drawing.Size(456, 154);
             this.ResponseAsciiTextBox.TabIndex = 11;
             // 
             // ResponseHexTextBox
@@ -366,7 +457,7 @@ namespace FatClient
             this.ResponseHexTextBox.Multiline = true;
             this.ResponseHexTextBox.Name = "ResponseHexTextBox";
             this.ResponseHexTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.ResponseHexTextBox.Size = new System.Drawing.Size(456, 134);
+            this.ResponseHexTextBox.Size = new System.Drawing.Size(456, 154);
             this.ResponseHexTextBox.TabIndex = 10;
             // 
             // Equipment
@@ -384,6 +475,10 @@ namespace FatClient
             this.panel1.PerformLayout();
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
+            this.commandLayout.ResumeLayout(false);
+            this.commandLayout.PerformLayout();
+            this.commandListManageLayout.ResumeLayout(false);
+            this.commandButtonsLayout.ResumeLayout(false);
             this.logTableLayoutPanel.ResumeLayout(false);
             this.logTableLayoutPanel.PerformLayout();
             this.ResumeLayout(false);
@@ -411,11 +506,17 @@ namespace FatClient
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox tailTextBox;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button selectBinaryFileButton;
+        private System.Windows.Forms.Button sendBinaryFileButton;
         private System.Windows.Forms.Button disconnectButton;
         private System.Windows.Forms.Button connectButton;
         private System.Windows.Forms.TableLayoutPanel logTableLayoutPanel;
         private System.Windows.Forms.TextBox ResponseAsciiTextBox;
+        private System.Windows.Forms.TableLayoutPanel commandLayout;
+        private System.Windows.Forms.TableLayoutPanel commandListManageLayout;
+        private System.Windows.Forms.ListBox commandListBox;
+        private System.Windows.Forms.TableLayoutPanel commandButtonsLayout;
+        private System.Windows.Forms.Button addCommandButton;
+        private System.Windows.Forms.Button deleteCommandButton;
     }
 }

@@ -1,4 +1,4 @@
-﻿using FatClient.constants;
+using FatClient.constants;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -39,6 +39,11 @@ namespace FatClient.dto
             get;
             set;
         }
+        public List<string> commands
+        {
+            get;
+            set;
+        } = new List<string>();
         public String tail
         {
             get;
