@@ -20,76 +20,74 @@ namespace EquipMonitor
         {
             equipmentDto.initLogFile();
             EquipmentInfo info = equipmentDto.info;
+            try
+            {
+                equipmentDto.ReceiveAsciiResponse("Client connected to server.");
+
+                if (info.isHex)
+                {
+                    byte[] messageBytes = StringToByteArray(info.command.Replace(" ", ""));
+                    equipmentDto.ReceiveHexResponse("hex :" + SafranByteToMessageDecoder.ByteArrayToString(messageBytes, 0, messageBytes.Length));
+                    await SendAndReceiveAsync(equipmentDto, info, messageBytes);
+                }
+                else
+                {
+                    string[] lines = info.command.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+                    foreach (string line in lines)
+                    {
+                        string command = line;
+                        if (!string.IsNullOrEmpty(info.tail))
+                        {
+                            command += info.tail;
+                            command = command.Replace("\\r", "\r")
+                                             .Replace("\\n", "\n");
+                        }
+
+                        equipmentDto.ReceiveAsciiResponse("send :" + command);
+                        byte[] messageBytes = Encoding.UTF8.GetBytes(command);
+                        equipmentDto.ReceiveHexResponse("hex :" + SafranByteToMessageDecoder.ByteArrayToString(messageBytes, 0, messageBytes.Length));
+                        await SendAndReceiveAsync(equipmentDto, info, messageBytes);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                equipmentDto.ReceiveAsciiResponse(ex.Message);
+            }
+        }
+
+        // 매 호출마다 새 UdpClient를 생성하여 이전 ReceiveAsync 태스크 누적 방지
+        private async Task SendAndReceiveAsync(EquipmentDto equipmentDto, EquipmentInfo info, byte[] messageBytes)
+        {
             using (UdpClient udpClient = new UdpClient())
             {
-                try
-                {
-                    equipmentDto.ReceiveAsciiResponse("Client connected to server.");
+                await udpClient.SendAsync(messageBytes, messageBytes.Length, info.ip, info.port);
 
-                    // 1. 데이터 변환 및 전송
+                var receiveTask = udpClient.ReceiveAsync();
+                var timeoutTask = Task.Delay(3000);
+                var completedTask = await Task.WhenAny(receiveTask, timeoutTask);
+
+                if (completedTask == receiveTask)
+                {
+                    UdpReceiveResult result = await receiveTask;
+                    equipmentDto.ReceiveHexResponse("receive hex :" + SafranByteToMessageDecoder.ByteArrayToString(result.Buffer, 0, result.Buffer.Length));
                     if (info.isHex)
                     {
-                        byte[] messageBytes = StringToByteArray(info.command.Replace(" ", ""));
-                        equipmentDto.ReceiveHexResponse("hex :" + SafranByteToMessageDecoder.ByteArrayToString(messageBytes, 0, messageBytes.Length));
-                        await udpClient.SendAsync(messageBytes, messageBytes.Length, info.ip, info.port);
+                        string receivedMessage = ByteArrayToString(result.Buffer, 0, result.Buffer.Length);
+                        equipmentDto.ReceiveHexResponse(receivedMessage);
                     }
                     else
                     {
-                        string[] lines = info.command.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
-                        foreach (string line in lines)
-                        {
-                            string command = line;
-                            if (!string.IsNullOrEmpty(info.tail))
-                            {
-                                command += info.tail;
-                                command = command.Replace("\\r", "\r")  // 텍스트 "\r"을 실제 0x0D로
-                                                 .Replace("\\n", "\n"); // 텍스트 "\n"을 실제 0x0A로
-                            }
-
-                            equipmentDto.ReceiveAsciiResponse("send :" + command);
-                            byte[] messageBytes = Encoding.UTF8.GetBytes(command);
-                            equipmentDto.ReceiveHexResponse("hex :" + SafranByteToMessageDecoder.ByteArrayToString(messageBytes, 0, messageBytes.Length));
-                            equipmentDto.ReceiveHexResponse("hex :" + SafranByteToMessageDecoder.ByteArrayToString(messageBytes, 0, messageBytes.Length));
-                            await udpClient.SendAsync(messageBytes, messageBytes.Length, info.ip, info.port);
-
-                            // 2. 응답 대기 (타임아웃 처리)
-                            // Task.WhenAny를 사용하여 수신과 타임아웃 중 먼저 끝나는 쪽을 처리
-                            var receiveTask = udpClient.ReceiveAsync();
-
-                            var completedTask = await Task.WhenAny(receiveTask);
-
-                            if (completedTask == receiveTask)
-                            {
-                                // 응답 성공
-                                UdpReceiveResult result = await receiveTask;
-
-                                equipmentDto.ReceiveHexResponse("receive hex :" + SafranByteToMessageDecoder.ByteArrayToString(result.Buffer, 0, result.Buffer.Length));
-                                if (info.isHex)
-                                {
-                                    string receivedMessage = ByteArrayToString(result.Buffer, 0, result.Buffer.Length);
-                                    equipmentDto.ReceiveHexResponse(receivedMessage);
-
-                                }
-                                else
-                                {
-                                    string receivedMessage = Encoding.UTF8.GetString(result.Buffer);
-                                    equipmentDto.ReceiveHexResponse(receivedMessage);
-                                }
-                            }
-                            else
-                            {
-                                // 타임아웃 발생
-                                equipmentDto.ReceiveAsciiResponse("장비 응답 시간이 초과되었습니다.");
-                            }
-                        }
+                        string receivedMessage = Encoding.UTF8.GetString(result.Buffer);
+                        equipmentDto.ReceiveAsciiResponse(receivedMessage);
                     }
                 }
-                catch (Exception ex)
+                else
                 {
-                    equipmentDto.ReceiveAsciiResponse(ex.Message);
+                    equipmentDto.ReceiveAsciiResponse("장비 응답 시간이 초과되었습니다.");
+                    // using 블록 종료 시 UdpClient가 Dispose되어 대기 중인 receiveTask도 종료됨
                 }
             }
-
         }
         public static string ByteArrayToString(byte[] ba, int start, int size)
         {
@@ -110,6 +108,11 @@ namespace EquipMonitor
 
         public static byte[] StringToByteArray(string hex)
         {
+            if (hex.Length % 2 != 0)
+            {
+                hex = hex.Substring(0, hex.Length - 1);
+            }
+
             return Enumerable.Range(0, hex.Length)
                              .Where(x => x % 2 == 0)
                              .Select(x => Convert.ToByte(hex.Substring(x, 2), 16))

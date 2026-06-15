@@ -11,11 +11,11 @@ using System.Windows.Forms;
 
 namespace EquipMonitor
 {
-    public partial class EquipMonitor : Form
+    public partial class MainForm : Form
     {
         public static string logPath = System.Windows.Forms.Application.StartupPath + @"\Log\";
         public static string EquipmentPath = System.Windows.Forms.Application.StartupPath + @"\Equipment\";
-        public EquipMonitor()
+        public MainForm()
         {
             InitializeComponent();
             this.FormClosing += Form1_FormClosing;

@@ -133,7 +133,7 @@ namespace EquipMonitor
         }
         void WriteEquipmentInfo()
         {
-            StreamWriter writer = File.CreateText(EquipMonitor.EquipmentPath + this.equipment.info.name + ".txt");
+            StreamWriter writer = File.CreateText(MainForm.EquipmentPath + this.equipment.info.name + ".txt");
             
             this.equipment.info.ip = this.ipText.Text;
             int port = 0;
@@ -302,21 +302,30 @@ namespace EquipMonitor
             }
         }
 
-        private void commandListBox_SelectedIndexChanged(object sender, EventArgs e)
+        private async void commandListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (commandListBox.SelectedIndex != -1)
             {
+                string content = string.Empty;
                 if (commandListBox.SelectedItem is CommandInfo cmdInfo)
                 {
                     this.TitleTextBox.Text = cmdInfo.Title;
                     this.DescriptionTextBox.Text = cmdInfo.Description;
                     this.MessageTextBox.Text = cmdInfo.Content;
+                    content = cmdInfo.Content;
                 }
                 else if (commandListBox.SelectedItem != null)
                 {
                     this.TitleTextBox.Text = string.Empty;
                     this.DescriptionTextBox.Text = string.Empty;
                     this.MessageTextBox.Text = commandListBox.SelectedItem.ToString();
+                    content = commandListBox.SelectedItem.ToString();
+                }
+
+                if (!string.IsNullOrEmpty(content))
+                {
+                    WriteEquipmentInfo();
+                    await Send();
                 }
             }
         }

@@ -28,17 +28,7 @@ namespace EquipMonitor
                 if (channel == null || !channel.Active)
                 {
                     equipmentDto.initLogFile();
-                    group = new MultithreadEventLoopGroup();
-                    var bootstrap = new Bootstrap();
-                    bootstrap.Group(group)
-                             .Channel<TcpSocketChannel>()
-                             .Handler(new ActionChannelInitializer<ISocketChannel>(ctx =>
-                             {
-                                 var pipeline = ctx.Pipeline;
-                                 pipeline.AddLast(new ClientHandler(equipmentDto));
-                             }));
-
-                    channel = await bootstrap.ConnectAsync(new IPEndPoint(IPAddress.Parse(info.ip), info.port));
+                    channel = await CreateAndConnectChannelAsync(info, equipmentDto);
                     equipmentDto.ReceiveAsciiResponse("Client connected to server. ip : " + info.ip + " port : " + info.port);
                     equipmentDto.OnConnectionStateChanged?.Invoke(true);
                 }
@@ -48,6 +38,20 @@ namespace EquipMonitor
                 equipmentDto.ReceiveHexResponse(ex.Message);
                 await CloseAsync();
             }
+        }
+
+        private async Task<IChannel> CreateAndConnectChannelAsync(EquipmentInfo info, EquipmentDto equipmentDto)
+        {
+            group = new MultithreadEventLoopGroup();
+            var bootstrap = new Bootstrap();
+            bootstrap.Group(group)
+                     .Channel<TcpSocketChannel>()
+                     .Handler(new ActionChannelInitializer<ISocketChannel>(ctx =>
+                     {
+                         var pipeline = ctx.Pipeline;
+                         pipeline.AddLast(new ClientHandler(equipmentDto));
+                     }));
+            return await bootstrap.ConnectAsync(new IPEndPoint(IPAddress.Parse(info.ip), info.port));
         }
 
         public async Task RunAsync(EquipmentDto equipmentDto)
@@ -96,18 +100,7 @@ namespace EquipMonitor
                 if (channel == null || !channel.Active)
                 {
                     equipmentDto.initLogFile();
-                    group = new MultithreadEventLoopGroup();
-                    var bootstrap = new Bootstrap();
-                    bootstrap.Group(group)
-                             .Channel<TcpSocketChannel>()
-                             .Handler(new ActionChannelInitializer<ISocketChannel>(ctx =>
-                             {
-                                 var pipeline = ctx.Pipeline;
-                                 pipeline.AddLast(new LengthFieldBasedFrameDecoder(100000, 4, 4, -8, 0));
-                                 pipeline.AddLast(new SafranByteToMessageDecoder(equipmentDto));
-                             }));
-
-                    channel = await bootstrap.ConnectAsync(new IPEndPoint(IPAddress.Parse(info.ip), info.port));
+                    channel = await CreateAndConnectChannelAsync(info, equipmentDto);
                     equipmentDto.ReceiveHexResponse("Client connected to server.");
                 }
 

@@ -20,7 +20,7 @@ namespace EquipMonitor
         {
             if (this.equipmentDto.info.isHex)
             {
-                string receivedMessage = ByteArrayToString(msg.Array, 0, msg.ReadableBytes);
+                string receivedMessage = ByteArrayToString(msg.Array, msg.ArrayOffset + msg.ReaderIndex, msg.ReadableBytes);
                 equipmentDto.ReceiveHexResponse("receive : " + receivedMessage);
 
 

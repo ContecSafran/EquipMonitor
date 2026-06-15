@@ -31,7 +31,7 @@ namespace EquipMonitor.dto
         string logFilePath;
         public void initLogFile()
         {
-            logFilePath = EquipMonitor.logPath + string.Format("{0}_{1}.txt", DateTime.Now.ToString("yyyyMMddhhmmss"), this.info.name);
+            logFilePath = MainForm.logPath + string.Format("{0}_{1}.txt", DateTime.Now.ToString("yyyyMMddhhmmss"), this.info.name);
         }
         public void ReceiveResponse(string msg, System.Windows.Forms.TextBox textBox)
         {

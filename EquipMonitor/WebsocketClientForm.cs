@@ -15,7 +15,7 @@ using System.Windows.Forms;
 
 namespace EquipMonitor
 {
-    public partial class WebsocketClientForm : Form
+    public partial class WebsocketClientForm : System.Windows.Forms.Form
     {
         private ClientWebSocket _webSocket; // 연결 시마다 새로 생성해야 함
         private CancellationTokenSource _cts;
@@ -31,7 +31,6 @@ namespace EquipMonitor
 
         private async void ConnectButton_Click(object sender, EventArgs e)
         {
-            // 이전 연결이 살아있다면 닫기
             if (_webSocket != null && _webSocket.State == WebSocketState.Open)
             {
                 await StopAsync();
@@ -42,40 +41,33 @@ namespace EquipMonitor
                 WriteEquipmentInfo();
                 initLogFile();
                 await StartAsync();
-                ConnectButton.Text = "접속 해제";
+                // 연결 성공 여부에 따라 버튼 텍스트 결정
+                ConnectButton.Text = (_webSocket != null && _webSocket.State == WebSocketState.Open)
+                    ? "접속 해제"
+                    : "접속";
             }
         }
 
         void WriteEquipmentInfo()
         {
-            StreamWriter writer = File.CreateText(EquipMonitor.EquipmentPath + "websocket.json");
-
             this.websocketInfo.url = this.urlTextBox.Text;
-            /*
-            if (!string.IsNullOrEmpty(this.idText.Text) && !string.IsNullOrEmpty(this.passwordTextBox.Text))
-            {
-                string authInfo = $"{this.idText.Text}:{this.passwordTextBox.Text}";
-                this.websocketInfo.base64Auth = Convert.ToBase64String(Encoding.UTF8.GetBytes(authInfo));
-            }
-            else
-            {
-                this.websocketInfo.base64Auth = "";
-            }*/
 
             var options = new JsonSerializerOptions { WriteIndented = true };
             string jsonString = System.Text.Json.JsonSerializer.Serialize(this.websocketInfo, options);
-            writer.Write(jsonString);
-            writer.Close();
+            using (StreamWriter writer = File.CreateText(MainForm.EquipmentPath + "websocket.json"))
+            {
+                writer.Write(jsonString);
+            }
         }
 
         void ReadEquipmentInfo()
         {
-            if(!File.Exists(EquipMonitor.EquipmentPath + "websocket.json"))
+            if(!File.Exists(MainForm.EquipmentPath + "websocket.json"))
             {
                 return;
             }
             // 2. 파일 내용 읽기
-            string jsonString = File.ReadAllText(EquipMonitor.EquipmentPath + "websocket.json");
+            string jsonString = File.ReadAllText(MainForm.EquipmentPath + "websocket.json");
 
             // 3. 역직렬화 (JSON -> 객체)
             // <T> 부분에 복원할 클래스 명을 넣습니다.
@@ -148,7 +140,7 @@ namespace EquipMonitor
                 await _webSocket.ConnectAsync(serverUri, CancellationToken.None);
                 ReceiveResponse("서버에 연결되었습니다. [Url : " + this.websocketInfo.url + "]");
 
-                await SendMessageAsync("ConstellationsOn\n");
+                // await SendMessageAsync("ConstellationsOn\n"); // 특수 목적의 하드코딩 제거
 
                 // Task.Run으로 수신 루프 시작
                 _ = Task.Run(() => ReceiveDataAsync(_cts.Token));
@@ -157,6 +149,29 @@ namespace EquipMonitor
             {
                 ReceiveResponse($"연결 오류: {ex.Message}");
             }
+        }
+
+        private async void SendButton_Click(object sender, EventArgs e)
+        {
+            await DoSend();
+        }
+
+        private async void sendMessageTextBox_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
+        {
+            if (e.KeyCode == System.Windows.Forms.Keys.Enter)
+            {
+                e.SuppressKeyPress = true;
+                await DoSend();
+            }
+        }
+
+        private async Task DoSend()
+        {
+            string message = sendMessageTextBox.Text;
+            if (string.IsNullOrEmpty(message)) return;
+            await SendMessageAsync(message);
+            ReceiveResponse($"[송신] {message}");
+            sendMessageTextBox.Clear();
         }
 
         public async Task SendMessageAsync(string message)
@@ -173,8 +188,9 @@ namespace EquipMonitor
                 if (_webSocket != null)
                 {
                     _cts?.Cancel();
+                    _cts?.Dispose();
+                    _cts = null;
 
-                    // 연결이 열려있는 상태에서만 CloseAsync 호출
                     if (_webSocket.State == WebSocketState.Open || _webSocket.State == WebSocketState.CloseReceived)
                     {
                         await _webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Client stop", CancellationToken.None);
@@ -191,18 +207,40 @@ namespace EquipMonitor
             }
         }
 
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            base.OnFormClosing(e);
+            _cts?.Cancel();
+            _cts?.Dispose();
+            _cts = null;
+            if (_webSocket != null)
+            {
+                _webSocket.Dispose();
+                _webSocket = null;
+            }
+        }
+
         private async Task ReceiveDataAsync(CancellationToken ct)
         {
             byte[] buffer = new byte[1024 * 64]; // 자바 데이터가 크므로 64KB 권장
             try
             {
+                StringBuilder messageBuilder = new StringBuilder();
                 while (_webSocket != null && _webSocket.State == WebSocketState.Open && !ct.IsCancellationRequested)
                 {
                     var result = await _webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), ct);
                     if (result.MessageType == WebSocketMessageType.Close) break;
 
-                    string data = Encoding.UTF8.GetString(buffer, 0, result.Count);
-                    ReceiveResponse($"[수신] {data.Substring(0, data.Length)}...");
+                    string part = Encoding.UTF8.GetString(buffer, 0, result.Count);
+                    messageBuilder.Append(part);
+
+                    if (result.EndOfMessage)
+                    {
+                        string data = messageBuilder.ToString();
+                        // 내용이 너무 길면 자르기 등 추가 가능
+                        ReceiveResponse($"[수신] {data}");
+                        messageBuilder.Clear();
+                    }
                 }
             }
             catch (OperationCanceledException) { }
@@ -214,8 +252,10 @@ namespace EquipMonitor
 
         public void initLogFile()
         {
-            logFilePath = EquipMonitor.logPath + string.Format("Websocket {0}.txt", DateTime.Now.ToString("yyyyMMddhhmmss"));
+            logFilePath = MainForm.logPath + string.Format("Websocket {0}.txt", DateTime.Now.ToString("yyyyMMddhhmmss"));
         }
+
+        private static readonly object _fileLock = new object();
 
         public void ReceiveResponse(string msg)
         {
@@ -227,12 +267,22 @@ namespace EquipMonitor
             }
             else
             {
-                // [수정] 여기서 자기 자신(ReceiveResponse)을 또 호출하면 안 됩니다!
                 ResponseTextBox.AppendText($"[{DateTime.Now:HH:mm:ss}] {msg}\r\n");
 
-                StreamWriter sw = new StreamWriter(logFilePath, true);
-                sw.WriteLine(msg);
-                sw.Close();
+                Task.Run(() =>
+                {
+                    lock (_fileLock)
+                    {
+                        try
+                        {
+                            using (StreamWriter sw = new StreamWriter(logFilePath, true, Encoding.UTF8))
+                            {
+                                sw.WriteLine(msg);
+                            }
+                        }
+                        catch { /* 파일 쓰기 실패 무시 */ }
+                    }
+                });
             }
         }
     }
