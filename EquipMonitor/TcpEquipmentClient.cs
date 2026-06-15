@@ -61,6 +61,8 @@ namespace EquipMonitor
             {
                 await ConnectAsync(equipmentDto);
 
+                if (channel == null || !channel.Active) return;
+
                 if (!string.IsNullOrEmpty(info.command))
                 {
                     if (info.isHex)

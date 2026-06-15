@@ -31,6 +31,7 @@ namespace EquipMonitor
             equipment.ResponseAsciiTextBox = this.ResponseAsciiTextBox;
             InitConnectionCallback();
             InitHexUtil();
+            SetDefaultRadioButtons();
         }
         public Equipment(String name)
         {
@@ -42,6 +43,7 @@ namespace EquipMonitor
             equipment.ResponseAsciiTextBox = this.ResponseAsciiTextBox;
             InitConnectionCallback();
             InitHexUtil();
+            SetDefaultRadioButtons();
         }
         public Equipment(FileInfo fi)
         {
@@ -53,6 +55,14 @@ namespace EquipMonitor
             equipment.ResponseAsciiTextBox = this.ResponseAsciiTextBox;
             InitConnectionCallback();
             InitHexUtil();
+        }
+
+        private void SetDefaultRadioButtons()
+        {
+            this.tcpRadio.Checked = true;
+            this.isHexMassage.Checked = true;
+            equipment.info.clientType = constants.ClientType.TCP;
+            equipment.info.isHex = true;
         }
 
         private void InitHexUtil()
@@ -119,8 +129,82 @@ namespace EquipMonitor
             WriteEquipmentInfo();
             await Send();
         }
+
+        private void clearResponseButton_Click(object sender, EventArgs e)
+        {
+            this.ResponseHexTextBox.Clear();
+            this.ResponseAsciiTextBox.Clear();
+        }
+
+        public void RenameEquipment(string newName)
+        {
+            string oldFilePath = MainForm.EquipmentPath + equipment.info.name + ".txt";
+            string newFilePath = MainForm.EquipmentPath + newName + ".txt";
+
+            if (File.Exists(oldFilePath))
+            {
+                File.Move(oldFilePath, newFilePath);
+            }
+
+            equipment.info.name = newName;
+            this.Name = newName;
+            WriteEquipmentInfo();
+        }
+
+        public void SaveEquipmentInfo()
+        {
+            WriteEquipmentInfo();
+        }
+
+        private void copyCommandButton_Click(object sender, EventArgs e)
+        {
+            if (commandListBox.SelectedIndex == -1) return;
+
+            CommandInfo source;
+            if (commandListBox.SelectedItem is CommandInfo cmdInfo)
+            {
+                source = cmdInfo;
+            }
+            else if (commandListBox.SelectedItem != null)
+            {
+                source = new CommandInfo { Title = string.Empty, Content = commandListBox.SelectedItem.ToString() };
+            }
+            else return;
+
+            string newTitle = GenerateUniqueCommandTitle(source.Title);
+            var newCmd = new CommandInfo { Title = newTitle, Description = source.Description, Content = source.Content };
+            commandListBox.Items.Add(newCmd);
+            commandListBox.SelectedItem = newCmd;
+            WriteEquipmentInfo();
+        }
+
+        private string GenerateUniqueCommandTitle(string sourceTitle)
+        {
+            var match = System.Text.RegularExpressions.Regex.Match(sourceTitle, @"^(.*)\((\d+)\)$");
+            string baseTitle = match.Success ? match.Groups[1].Value : sourceTitle;
+            int i = match.Success ? int.Parse(match.Groups[2].Value) + 1 : 1;
+
+            string candidate;
+            do
+            {
+                candidate = $"{baseTitle}({i++})";
+            } while (commandListBox.Items.Cast<object>().Any(item =>
+                item is CommandInfo cmd ? cmd.Title == candidate : item?.ToString() == candidate));
+            return candidate;
+        }
         async Task Send()
         {
+            if (string.IsNullOrWhiteSpace(equipment.info.ip))
+            {
+                equipment.ReceiveAsciiResponse("오류: IP 주소를 입력하세요.");
+                return;
+            }
+            if (equipment.info.port <= 0)
+            {
+                equipment.ReceiveAsciiResponse("오류: 유효한 포트 번호를 입력하세요.");
+                return;
+            }
+
             if(equipment.info.clientType == constants.ClientType.TCP)
             {
                 await tcpClient.RunAsync(equipment);
@@ -137,16 +221,8 @@ namespace EquipMonitor
             
             this.equipment.info.ip = this.ipText.Text;
             int port = 0;
-            if (Int32.TryParse(this.portTextBox.Text, out port))
-            {
-                this.equipment.info.port = port;
-            }
-            else
-            {
-                equipment.ReceiveAsciiResponse("error connect infomation file");
-                writer.Close();
-                return;
-            }
+            Int32.TryParse(this.portTextBox.Text, out port);
+            this.equipment.info.port = port;
             this.equipment.info.isHex = this.isHexMassage.Checked;
             
             this.equipment.info.commands.Clear();
@@ -302,31 +378,37 @@ namespace EquipMonitor
             }
         }
 
-        private async void commandListBox_SelectedIndexChanged(object sender, EventArgs e)
+        private void commandListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (commandListBox.SelectedIndex != -1)
             {
-                string content = string.Empty;
                 if (commandListBox.SelectedItem is CommandInfo cmdInfo)
                 {
                     this.TitleTextBox.Text = cmdInfo.Title;
                     this.DescriptionTextBox.Text = cmdInfo.Description;
                     this.MessageTextBox.Text = cmdInfo.Content;
-                    content = cmdInfo.Content;
                 }
                 else if (commandListBox.SelectedItem != null)
                 {
                     this.TitleTextBox.Text = string.Empty;
                     this.DescriptionTextBox.Text = string.Empty;
                     this.MessageTextBox.Text = commandListBox.SelectedItem.ToString();
-                    content = commandListBox.SelectedItem.ToString();
                 }
+            }
+        }
 
-                if (!string.IsNullOrEmpty(content))
-                {
-                    WriteEquipmentInfo();
-                    await Send();
-                }
+        private async void commandListBox_DoubleClick(object sender, EventArgs e)
+        {
+            if (commandListBox.SelectedIndex == -1) return;
+
+            string content = commandListBox.SelectedItem is CommandInfo cmdInfo
+                ? cmdInfo.Content
+                : commandListBox.SelectedItem?.ToString();
+
+            if (!string.IsNullOrEmpty(content))
+            {
+                WriteEquipmentInfo();
+                await Send();
             }
         }
 

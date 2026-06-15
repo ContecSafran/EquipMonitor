@@ -29,7 +29,6 @@ namespace EquipMonitor
         /// </summary>
         private void InitializeComponent()
         {
-            this.hexUtil1 = new HexUtil();
             this.EquipmentTableLayout = new System.Windows.Forms.TableLayoutPanel();
             this.disconnectButton = new System.Windows.Forms.Button();
             this.connectButton = new System.Windows.Forms.Button();
@@ -57,6 +56,7 @@ namespace EquipMonitor
             this.addCommandButton = new System.Windows.Forms.Button();
             this.modifyCommandButton = new System.Windows.Forms.Button();
             this.deleteCommandButton = new System.Windows.Forms.Button();
+            this.copyCommandButton = new System.Windows.Forms.Button();
             this.commandInputLayout = new System.Windows.Forms.TableLayoutPanel();
             this.commandTitleLayout = new System.Windows.Forms.TableLayoutPanel();
             this.commandTitleLabel = new System.Windows.Forms.Label();
@@ -67,10 +67,13 @@ namespace EquipMonitor
             this.DescriptionTextBox = new System.Windows.Forms.TextBox();
             this.MessageTextBox = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.sendButtonPanel = new System.Windows.Forms.TableLayoutPanel();
             this.SendMessageButton = new System.Windows.Forms.Button();
+            this.clearResponseButton = new System.Windows.Forms.Button();
             this.logTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
             this.ResponseAsciiTextBox = new System.Windows.Forms.TextBox();
             this.ResponseHexTextBox = new System.Windows.Forms.TextBox();
+            this.hexUtil1 = new EquipMonitor.HexUtil();
             this.EquipmentTableLayout.SuspendLayout();
             this.panel2.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -85,18 +88,9 @@ namespace EquipMonitor
             this.commandInputSplitContainer.Panel2.SuspendLayout();
             this.commandInputSplitContainer.SuspendLayout();
             this.commandDescLayout.SuspendLayout();
+            this.sendButtonPanel.SuspendLayout();
             this.logTableLayoutPanel.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // hexUtil1
-            // 
-            this.hexUtil1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.hexUtil1.Location = new System.Drawing.Point(0, 28);
-            this.hexUtil1.Name = "hexUtil1";
-            this.hexUtil1.Size = new System.Drawing.Size(641, 30);
-            this.hexUtil1.TabIndex = 3;
-            this.hexUtil1.TargetTextBox = null;
-            this.hexUtil1.Visible = false;
             // 
             // EquipmentTableLayout
             // 
@@ -324,7 +318,7 @@ namespace EquipMonitor
             this.tableLayoutPanel1.Controls.Add(this.commandLayout, 0, 2);
             this.tableLayoutPanel1.Controls.Add(this.label1, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.EquipmentTableLayout, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.SendMessageButton, 0, 3);
+            this.tableLayoutPanel1.Controls.Add(this.sendButtonPanel, 0, 3);
             this.tableLayoutPanel1.Controls.Add(this.logTableLayoutPanel, 0, 4);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
@@ -380,16 +374,19 @@ namespace EquipMonitor
             this.commandListBox.Size = new System.Drawing.Size(271, 124);
             this.commandListBox.TabIndex = 0;
             this.commandListBox.SelectedIndexChanged += new System.EventHandler(this.commandListBox_SelectedIndexChanged);
+            this.commandListBox.DoubleClick += new System.EventHandler(this.commandListBox_DoubleClick);
             // 
             // commandButtonsLayout
             // 
-            this.commandButtonsLayout.ColumnCount = 3;
-            this.commandButtonsLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33F));
-            this.commandButtonsLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33F));
-            this.commandButtonsLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.34F));
+            this.commandButtonsLayout.ColumnCount = 4;
+            this.commandButtonsLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.commandButtonsLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.commandButtonsLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.commandButtonsLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
             this.commandButtonsLayout.Controls.Add(this.addCommandButton, 0, 0);
             this.commandButtonsLayout.Controls.Add(this.modifyCommandButton, 1, 0);
             this.commandButtonsLayout.Controls.Add(this.deleteCommandButton, 2, 0);
+            this.commandButtonsLayout.Controls.Add(this.copyCommandButton, 3, 0);
             this.commandButtonsLayout.Dock = System.Windows.Forms.DockStyle.Fill;
             this.commandButtonsLayout.Location = new System.Drawing.Point(0, 130);
             this.commandButtonsLayout.Margin = new System.Windows.Forms.Padding(0);
@@ -404,7 +401,7 @@ namespace EquipMonitor
             this.addCommandButton.Dock = System.Windows.Forms.DockStyle.Fill;
             this.addCommandButton.Location = new System.Drawing.Point(3, 3);
             this.addCommandButton.Name = "addCommandButton";
-            this.addCommandButton.Size = new System.Drawing.Size(86, 24);
+            this.addCommandButton.Size = new System.Drawing.Size(63, 24);
             this.addCommandButton.TabIndex = 0;
             this.addCommandButton.Text = "추가";
             this.addCommandButton.UseVisualStyleBackColor = true;
@@ -413,9 +410,9 @@ namespace EquipMonitor
             // modifyCommandButton
             // 
             this.modifyCommandButton.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.modifyCommandButton.Location = new System.Drawing.Point(95, 3);
+            this.modifyCommandButton.Location = new System.Drawing.Point(72, 3);
             this.modifyCommandButton.Name = "modifyCommandButton";
-            this.modifyCommandButton.Size = new System.Drawing.Size(86, 24);
+            this.modifyCommandButton.Size = new System.Drawing.Size(63, 24);
             this.modifyCommandButton.TabIndex = 2;
             this.modifyCommandButton.Text = "수정";
             this.modifyCommandButton.UseVisualStyleBackColor = true;
@@ -424,13 +421,24 @@ namespace EquipMonitor
             // deleteCommandButton
             // 
             this.deleteCommandButton.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.deleteCommandButton.Location = new System.Drawing.Point(187, 3);
+            this.deleteCommandButton.Location = new System.Drawing.Point(141, 3);
             this.deleteCommandButton.Name = "deleteCommandButton";
-            this.deleteCommandButton.Size = new System.Drawing.Size(87, 24);
+            this.deleteCommandButton.Size = new System.Drawing.Size(63, 24);
             this.deleteCommandButton.TabIndex = 1;
             this.deleteCommandButton.Text = "삭제";
             this.deleteCommandButton.UseVisualStyleBackColor = true;
             this.deleteCommandButton.Click += new System.EventHandler(this.deleteCommandButton_Click);
+            // 
+            // copyCommandButton
+            // 
+            this.copyCommandButton.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.copyCommandButton.Location = new System.Drawing.Point(210, 3);
+            this.copyCommandButton.Name = "copyCommandButton";
+            this.copyCommandButton.Size = new System.Drawing.Size(64, 24);
+            this.copyCommandButton.TabIndex = 3;
+            this.copyCommandButton.Text = "복사본 생성";
+            this.copyCommandButton.UseVisualStyleBackColor = true;
+            this.copyCommandButton.Click += new System.EventHandler(this.copyCommandButton_Click);
             // 
             // commandInputLayout
             // 
@@ -562,17 +570,45 @@ namespace EquipMonitor
             this.label1.Text = "Message";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // sendButtonPanel
+            // 
+            this.sendButtonPanel.ColumnCount = 2;
+            this.sendButtonPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.sendButtonPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 100F));
+            this.sendButtonPanel.Controls.Add(this.SendMessageButton, 0, 0);
+            this.sendButtonPanel.Controls.Add(this.clearResponseButton, 1, 0);
+            this.sendButtonPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.sendButtonPanel.Location = new System.Drawing.Point(0, 256);
+            this.sendButtonPanel.Margin = new System.Windows.Forms.Padding(0);
+            this.sendButtonPanel.Name = "sendButtonPanel";
+            this.sendButtonPanel.RowCount = 1;
+            this.sendButtonPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.sendButtonPanel.Size = new System.Drawing.Size(930, 30);
+            this.sendButtonPanel.TabIndex = 13;
+            // 
             // SendMessageButton
             // 
             this.SendMessageButton.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.SendMessageButton.Location = new System.Drawing.Point(0, 256);
+            this.SendMessageButton.Location = new System.Drawing.Point(0, 0);
             this.SendMessageButton.Margin = new System.Windows.Forms.Padding(0);
             this.SendMessageButton.Name = "SendMessageButton";
-            this.SendMessageButton.Size = new System.Drawing.Size(930, 30);
+            this.SendMessageButton.Size = new System.Drawing.Size(830, 30);
             this.SendMessageButton.TabIndex = 9;
             this.SendMessageButton.Text = "메시지 전송";
             this.SendMessageButton.UseVisualStyleBackColor = true;
             this.SendMessageButton.Click += new System.EventHandler(this.SendMessageButton_Click);
+            // 
+            // clearResponseButton
+            // 
+            this.clearResponseButton.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.clearResponseButton.Location = new System.Drawing.Point(830, 0);
+            this.clearResponseButton.Margin = new System.Windows.Forms.Padding(0);
+            this.clearResponseButton.Name = "clearResponseButton";
+            this.clearResponseButton.Size = new System.Drawing.Size(100, 30);
+            this.clearResponseButton.TabIndex = 10;
+            this.clearResponseButton.Text = "초기화";
+            this.clearResponseButton.UseVisualStyleBackColor = true;
+            this.clearResponseButton.Click += new System.EventHandler(this.clearResponseButton_Click);
             // 
             // logTableLayoutPanel
             // 
@@ -609,6 +645,16 @@ namespace EquipMonitor
             this.ResponseHexTextBox.Size = new System.Drawing.Size(456, 154);
             this.ResponseHexTextBox.TabIndex = 10;
             // 
+            // hexUtil1
+            // 
+            this.hexUtil1.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.hexUtil1.Location = new System.Drawing.Point(0, 28);
+            this.hexUtil1.Name = "hexUtil1";
+            this.hexUtil1.Size = new System.Drawing.Size(641, 30);
+            this.hexUtil1.TabIndex = 3;
+            this.hexUtil1.TargetTextBox = null;
+            this.hexUtil1.Visible = false;
+            // 
             // Equipment
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
@@ -637,6 +683,7 @@ namespace EquipMonitor
             this.commandInputSplitContainer.ResumeLayout(false);
             this.commandDescLayout.ResumeLayout(false);
             this.commandDescLayout.PerformLayout();
+            this.sendButtonPanel.ResumeLayout(false);
             this.logTableLayoutPanel.ResumeLayout(false);
             this.logTableLayoutPanel.PerformLayout();
             this.ResumeLayout(false);
@@ -651,7 +698,9 @@ namespace EquipMonitor
         private System.Windows.Forms.Label IPLabel;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TableLayoutPanel sendButtonPanel;
         private System.Windows.Forms.Button SendMessageButton;
+        private System.Windows.Forms.Button clearResponseButton;
         private System.Windows.Forms.TextBox MessageTextBox;
         private System.Windows.Forms.TextBox ResponseHexTextBox;
         private System.Windows.Forms.Panel panel2;
@@ -677,6 +726,7 @@ namespace EquipMonitor
         private System.Windows.Forms.Button addCommandButton;
         private System.Windows.Forms.Button modifyCommandButton;
         private System.Windows.Forms.Button deleteCommandButton;
+        private System.Windows.Forms.Button copyCommandButton;
         private System.Windows.Forms.TableLayoutPanel commandInputLayout;
         private System.Windows.Forms.TableLayoutPanel commandTitleLayout;
         private System.Windows.Forms.Label commandTitleLabel;

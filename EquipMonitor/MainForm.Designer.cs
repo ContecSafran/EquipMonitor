@@ -33,11 +33,15 @@ namespace EquipMonitor
             this.Maintab = new System.Windows.Forms.TabControl();
             this.toolStripContainer1 = new System.Windows.Forms.ToolStripContainer();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.AddClientNameTextBox = new System.Windows.Forms.ToolStripTextBox();
+            this.ClientNameLabel = new System.Windows.Forms.ToolStripLabel();
+            this.ClientNameTextBox = new System.Windows.Forms.ToolStripTextBox();
             this.AddButton = new System.Windows.Forms.ToolStripButton();
+            this.RenameClientButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.WebsocketButton = new System.Windows.Forms.ToolStripButton();
             this.LogFolderButton = new System.Windows.Forms.ToolStripButton();
+            this.DeleteEquipmentButton = new System.Windows.Forms.ToolStripButton();
+            this.CopyEquipmentButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripContainer1.ContentPanel.SuspendLayout();
             this.toolStripContainer1.TopToolStripPanel.SuspendLayout();
             this.toolStripContainer1.SuspendLayout();
@@ -75,24 +79,33 @@ namespace EquipMonitor
             // 
             this.toolStrip1.Dock = System.Windows.Forms.DockStyle.None;
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.AddClientNameTextBox,
+            this.ClientNameLabel,
+            this.ClientNameTextBox,
             this.AddButton,
+            this.RenameClientButton,
             this.toolStripSeparator1,
             this.WebsocketButton,
-            this.LogFolderButton});
+            this.LogFolderButton,
+            this.DeleteEquipmentButton,
+            this.CopyEquipmentButton});
             this.toolStrip1.Location = new System.Drawing.Point(3, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(417, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(544, 25);
             this.toolStrip1.TabIndex = 0;
-            // 
-            // AddClientNameTextBox
-            // 
-            this.AddClientNameTextBox.Font = new System.Drawing.Font("맑은 고딕", 9F);
-            this.AddClientNameTextBox.Name = "AddClientNameTextBox";
-            this.AddClientNameTextBox.Size = new System.Drawing.Size(100, 25);
-            // 
+            //
+            // ClientNameLabel
+            //
+            this.ClientNameLabel.Name = "ClientNameLabel";
+            this.ClientNameLabel.Size = new System.Drawing.Size(34, 22);
+            this.ClientNameLabel.Text = "이름:";
+            //
+            // ClientNameTextBox
+            //
+            this.ClientNameTextBox.Name = "ClientNameTextBox";
+            this.ClientNameTextBox.Size = new System.Drawing.Size(100, 25);
+            //
             // AddButton
-            // 
+            //
             this.AddButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.AddButton.Image = ((System.Drawing.Image)(resources.GetObject("AddButton.Image")));
             this.AddButton.ImageTransparentColor = System.Drawing.Color.Magenta;
@@ -100,6 +113,14 @@ namespace EquipMonitor
             this.AddButton.Size = new System.Drawing.Size(99, 22);
             this.AddButton.Text = "클라이언트 추가";
             this.AddButton.Click += new System.EventHandler(this.AddButton_Click);
+            //
+            // RenameClientButton
+            //
+            this.RenameClientButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.RenameClientButton.Name = "RenameClientButton";
+            this.RenameClientButton.Size = new System.Drawing.Size(99, 22);
+            this.RenameClientButton.Text = "이름 변경";
+            this.RenameClientButton.Click += new System.EventHandler(this.RenameClientButton_Click);
             // 
             // toolStripSeparator1
             // 
@@ -126,13 +147,30 @@ namespace EquipMonitor
             this.LogFolderButton.Text = "로그 폴더 보기";
             this.LogFolderButton.Click += new System.EventHandler(this.LogFolderButton_Click);
             // 
-            // Form1
+            // DeleteEquipmentButton
+            // 
+            this.DeleteEquipmentButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.DeleteEquipmentButton.Name = "DeleteEquipmentButton";
+            this.DeleteEquipmentButton.Size = new System.Drawing.Size(127, 22);
+            this.DeleteEquipmentButton.Text = "선택 클라이언트 삭제";
+            this.DeleteEquipmentButton.ToolTipText = "선택 클라이언트 삭제";
+            this.DeleteEquipmentButton.Click += new System.EventHandler(this.DeleteEquipmentButton_Click);
+            //
+            // CopyEquipmentButton
+            //
+            this.CopyEquipmentButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.CopyEquipmentButton.Name = "CopyEquipmentButton";
+            this.CopyEquipmentButton.Size = new System.Drawing.Size(115, 22);
+            this.CopyEquipmentButton.Text = "클라이언트 복사";
+            this.CopyEquipmentButton.Click += new System.EventHandler(this.CopyEquipmentButton_Click);
+            // 
+            // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(822, 383);
             this.Controls.Add(this.toolStripContainer1);
-            this.Name = "Form1";
+            this.Name = "MainForm";
             this.Text = "EquipMonitor";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.toolStripContainer1.ContentPanel.ResumeLayout(false);
@@ -151,11 +189,15 @@ namespace EquipMonitor
         private System.Windows.Forms.TabControl Maintab;
         private System.Windows.Forms.ToolStripContainer toolStripContainer1;
         private System.Windows.Forms.ToolStrip toolStrip1;
+        private System.Windows.Forms.ToolStripLabel ClientNameLabel;
+        private System.Windows.Forms.ToolStripTextBox ClientNameTextBox;
         private System.Windows.Forms.ToolStripButton AddButton;
+        private System.Windows.Forms.ToolStripButton RenameClientButton;
         private System.Windows.Forms.ToolStripButton WebsocketButton;
-        private System.Windows.Forms.ToolStripTextBox AddClientNameTextBox;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripButton LogFolderButton;
+        private System.Windows.Forms.ToolStripButton DeleteEquipmentButton;
+        private System.Windows.Forms.ToolStripButton CopyEquipmentButton;
     }
 }
 

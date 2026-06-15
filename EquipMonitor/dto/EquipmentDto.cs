@@ -53,9 +53,12 @@ namespace EquipMonitor.dto
                     textBox.Text = textBox.Text + "\r\n" + Time + "\t" + formattedMsg;
                     textBox.Select(textBox.Text.Length, 0);
                     textBox.ScrollToCaret();
-                    StreamWriter sw = new StreamWriter(logFilePath, true);
-                    sw.WriteLine(formattedMsg);
-                    sw.Close();
+                    if (!string.IsNullOrEmpty(logFilePath))
+                    {
+                        StreamWriter sw = new StreamWriter(logFilePath, true);
+                        sw.WriteLine(formattedMsg);
+                        sw.Close();
+                    }
                 }
             }
         }
