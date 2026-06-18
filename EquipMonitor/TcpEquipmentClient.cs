@@ -118,17 +118,19 @@ namespace EquipMonitor
 
         public async Task CloseAsync()
         {
-            if (channel != null)
+            var ch = channel;
+            var grp = group;
+            channel = null;
+            group = null;
+
+            if (ch != null)
             {
-                await channel.CloseAsync();
-                channel = null;
+                await ch.CloseAsync();
             }
-            if (group != null)
+            if (grp != null)
             {
-                await group.ShutdownGracefullyAsync(TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(1));
-                group = null;
+                await grp.ShutdownGracefullyAsync(TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(1));
             }
-            this.equipmentDto?.OnConnectionStateChanged?.Invoke(false);
         }
 
         public static byte[] StringToByteArray(string hex)

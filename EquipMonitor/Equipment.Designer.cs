@@ -66,6 +66,7 @@ namespace EquipMonitor
             this.commandDescLabel = new System.Windows.Forms.Label();
             this.DescriptionTextBox = new System.Windows.Forms.TextBox();
             this.MessageTextBox = new System.Windows.Forms.TextBox();
+            this.hexUtil1 = new EquipMonitor.HexUtil();
             this.label1 = new System.Windows.Forms.Label();
             this.sendButtonPanel = new System.Windows.Forms.TableLayoutPanel();
             this.SendMessageButton = new System.Windows.Forms.Button();
@@ -73,7 +74,6 @@ namespace EquipMonitor
             this.logTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
             this.ResponseAsciiTextBox = new System.Windows.Forms.TextBox();
             this.ResponseHexTextBox = new System.Windows.Forms.TextBox();
-            this.hexUtil1 = new EquipMonitor.HexUtil();
             this.EquipmentTableLayout.SuspendLayout();
             this.panel2.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -559,6 +559,16 @@ namespace EquipMonitor
             this.MessageTextBox.Size = new System.Drawing.Size(641, 28);
             this.MessageTextBox.TabIndex = 2;
             // 
+            // hexUtil1
+            // 
+            this.hexUtil1.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.hexUtil1.Location = new System.Drawing.Point(0, 28);
+            this.hexUtil1.Name = "hexUtil1";
+            this.hexUtil1.Size = new System.Drawing.Size(641, 30);
+            this.hexUtil1.TabIndex = 3;
+            this.hexUtil1.TargetTextBox = null;
+            this.hexUtil1.Visible = false;
+            // 
             // label1
             // 
             this.label1.AutoSize = true;
@@ -644,16 +654,6 @@ namespace EquipMonitor
             this.ResponseHexTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
             this.ResponseHexTextBox.Size = new System.Drawing.Size(456, 154);
             this.ResponseHexTextBox.TabIndex = 10;
-            // 
-            // hexUtil1
-            // 
-            this.hexUtil1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.hexUtil1.Location = new System.Drawing.Point(0, 28);
-            this.hexUtil1.Name = "hexUtil1";
-            this.hexUtil1.Size = new System.Drawing.Size(641, 30);
-            this.hexUtil1.TabIndex = 3;
-            this.hexUtil1.TargetTextBox = null;
-            this.hexUtil1.Visible = false;
             // 
             // Equipment
             // 
