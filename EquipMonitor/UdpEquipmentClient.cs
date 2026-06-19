@@ -22,12 +22,12 @@ namespace EquipMonitor
             EquipmentInfo info = equipmentDto.info;
             try
             {
-                equipmentDto.ReceiveAsciiResponse("Client connected to server.");
+                equipmentDto.ReceiveLogResponse("Client connected to server.");
 
                 if (info.isHex)
                 {
                     byte[] messageBytes = StringToByteArray(info.command.Replace(" ", ""));
-                    equipmentDto.ReceiveHexResponse("hex :" + SafranByteToMessageDecoder.ByteArrayToString(messageBytes, 0, messageBytes.Length));
+                    equipmentDto.AddPacket(messageBytes, true);
                     await SendAndReceiveAsync(equipmentDto, info, messageBytes);
                 }
                 else
@@ -43,16 +43,15 @@ namespace EquipMonitor
                                              .Replace("\\n", "\n");
                         }
 
-                        equipmentDto.ReceiveAsciiResponse("send :" + command);
                         byte[] messageBytes = Encoding.UTF8.GetBytes(command);
-                        equipmentDto.ReceiveHexResponse("hex :" + SafranByteToMessageDecoder.ByteArrayToString(messageBytes, 0, messageBytes.Length));
+                        equipmentDto.AddPacket(messageBytes, true);
                         await SendAndReceiveAsync(equipmentDto, info, messageBytes);
                     }
                 }
             }
             catch (Exception ex)
             {
-                equipmentDto.ReceiveAsciiResponse(ex.Message);
+                equipmentDto.ReceiveLogResponse(ex.Message);
             }
         }
 
@@ -70,21 +69,11 @@ namespace EquipMonitor
                 if (completedTask == receiveTask)
                 {
                     UdpReceiveResult result = await receiveTask;
-                    equipmentDto.ReceiveHexResponse("receive hex :" + SafranByteToMessageDecoder.ByteArrayToString(result.Buffer, 0, result.Buffer.Length));
-                    if (info.isHex)
-                    {
-                        string receivedMessage = ByteArrayToString(result.Buffer, 0, result.Buffer.Length);
-                        equipmentDto.ReceiveHexResponse(receivedMessage);
-                    }
-                    else
-                    {
-                        string receivedMessage = Encoding.UTF8.GetString(result.Buffer);
-                        equipmentDto.ReceiveAsciiResponse(receivedMessage);
-                    }
+                    equipmentDto.AddPacket(result.Buffer, false);
                 }
                 else
                 {
-                    equipmentDto.ReceiveAsciiResponse("장비 응답 시간이 초과되었습니다.");
+                    equipmentDto.ReceiveLogResponse("장비 응답 시간이 초과되었습니다.");
                     // using 블록 종료 시 UdpClient가 Dispose되어 대기 중인 receiveTask도 종료됨
                 }
             }

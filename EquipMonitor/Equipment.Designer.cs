@@ -72,6 +72,7 @@ namespace EquipMonitor
             this.SendMessageButton = new System.Windows.Forms.Button();
             this.clearResponseButton = new System.Windows.Forms.Button();
             this.logTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
+            this.packetListBox = new System.Windows.Forms.ListBox();
             this.ResponseAsciiTextBox = new System.Windows.Forms.TextBox();
             this.ResponseHexTextBox = new System.Windows.Forms.TextBox();
             this.EquipmentTableLayout.SuspendLayout();
@@ -621,12 +622,14 @@ namespace EquipMonitor
             this.clearResponseButton.Click += new System.EventHandler(this.clearResponseButton_Click);
             // 
             // logTableLayoutPanel
-            // 
-            this.logTableLayoutPanel.ColumnCount = 2;
-            this.logTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.logTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.logTableLayoutPanel.Controls.Add(this.ResponseAsciiTextBox, 1, 0);
-            this.logTableLayoutPanel.Controls.Add(this.ResponseHexTextBox, 0, 0);
+            //
+            this.logTableLayoutPanel.ColumnCount = 3;
+            this.logTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.logTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 37.5F));
+            this.logTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 37.5F));
+            this.logTableLayoutPanel.Controls.Add(this.packetListBox, 0, 0);
+            this.logTableLayoutPanel.Controls.Add(this.ResponseHexTextBox, 1, 0);
+            this.logTableLayoutPanel.Controls.Add(this.ResponseAsciiTextBox, 2, 0);
             this.logTableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.logTableLayoutPanel.Location = new System.Drawing.Point(3, 289);
             this.logTableLayoutPanel.Name = "logTableLayoutPanel";
@@ -635,24 +638,38 @@ namespace EquipMonitor
             this.logTableLayoutPanel.Size = new System.Drawing.Size(924, 160);
             this.logTableLayoutPanel.TabIndex = 12;
             // 
+            //
+            // packetListBox
+            //
+            this.packetListBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.packetListBox.FormattingEnabled = true;
+            this.packetListBox.ItemHeight = 12;
+            this.packetListBox.Location = new System.Drawing.Point(3, 3);
+            this.packetListBox.Name = "packetListBox";
+            this.packetListBox.Size = new System.Drawing.Size(224, 154);
+            this.packetListBox.TabIndex = 12;
+            this.packetListBox.SelectedIndexChanged += new System.EventHandler(this.packetListBox_SelectedIndexChanged);
+            //
             // ResponseAsciiTextBox
-            // 
+            //
             this.ResponseAsciiTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ResponseAsciiTextBox.Location = new System.Drawing.Point(465, 3);
+            this.ResponseAsciiTextBox.Location = new System.Drawing.Point(580, 3);
             this.ResponseAsciiTextBox.Multiline = true;
             this.ResponseAsciiTextBox.Name = "ResponseAsciiTextBox";
+            this.ResponseAsciiTextBox.ReadOnly = true;
             this.ResponseAsciiTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.ResponseAsciiTextBox.Size = new System.Drawing.Size(456, 154);
+            this.ResponseAsciiTextBox.Size = new System.Drawing.Size(341, 154);
             this.ResponseAsciiTextBox.TabIndex = 11;
-            // 
+            //
             // ResponseHexTextBox
-            // 
+            //
             this.ResponseHexTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ResponseHexTextBox.Location = new System.Drawing.Point(3, 3);
+            this.ResponseHexTextBox.Location = new System.Drawing.Point(234, 3);
             this.ResponseHexTextBox.Multiline = true;
             this.ResponseHexTextBox.Name = "ResponseHexTextBox";
+            this.ResponseHexTextBox.ReadOnly = true;
             this.ResponseHexTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.ResponseHexTextBox.Size = new System.Drawing.Size(456, 154);
+            this.ResponseHexTextBox.Size = new System.Drawing.Size(340, 154);
             this.ResponseHexTextBox.TabIndex = 10;
             // 
             // Equipment
@@ -718,6 +735,7 @@ namespace EquipMonitor
         private System.Windows.Forms.Button disconnectButton;
         private System.Windows.Forms.Button connectButton;
         private System.Windows.Forms.TableLayoutPanel logTableLayoutPanel;
+        private System.Windows.Forms.ListBox packetListBox;
         private System.Windows.Forms.TextBox ResponseAsciiTextBox;
         private System.Windows.Forms.TableLayoutPanel commandLayout;
         private System.Windows.Forms.TableLayoutPanel commandListManageLayout;

@@ -24,13 +24,15 @@ namespace EquipMonitor
         #region Windows Form 디자이너에서 생성한 코드
 
         /// <summary>
-        /// 디자이너 지원에 필요한 메서드입니다. 
+        /// 디자이너 지원에 필요한 메서드입니다.
         /// 이 메서드의 내용을 코드 편집기로 수정하지 마세요.
         /// </summary>
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.Maintab = new System.Windows.Forms.TabControl();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.logTextBox = new System.Windows.Forms.TextBox();
             this.toolStripContainer1 = new System.Windows.Forms.ToolStripContainer();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.ClientNameLabel = new System.Windows.Forms.ToolStripLabel();
@@ -42,27 +44,63 @@ namespace EquipMonitor
             this.LogFolderButton = new System.Windows.Forms.ToolStripButton();
             this.DeleteEquipmentButton = new System.Windows.Forms.ToolStripButton();
             this.CopyEquipmentButton = new System.Windows.Forms.ToolStripButton();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+            this.splitContainer1.Panel1.SuspendLayout();
+            this.splitContainer1.Panel2.SuspendLayout();
+            this.splitContainer1.SuspendLayout();
             this.toolStripContainer1.ContentPanel.SuspendLayout();
             this.toolStripContainer1.TopToolStripPanel.SuspendLayout();
             this.toolStripContainer1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
-            // 
+            //
             // Maintab
-            // 
+            //
             this.Maintab.Dock = System.Windows.Forms.DockStyle.Fill;
             this.Maintab.Location = new System.Drawing.Point(0, 0);
             this.Maintab.Name = "Maintab";
             this.Maintab.SelectedIndex = 0;
-            this.Maintab.Size = new System.Drawing.Size(822, 358);
+            this.Maintab.Size = new System.Drawing.Size(822, 290);
             this.Maintab.TabIndex = 5;
-            // 
+            //
+            // splitContainer1
+            //
+            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer1.Name = "splitContainer1";
+            this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            //
+            // splitContainer1.Panel1 (상단: Maintab)
+            //
+            this.splitContainer1.Panel1.Controls.Add(this.Maintab);
+            //
+            // splitContainer1.Panel2 (하단: logTextBox)
+            //
+            this.splitContainer1.Panel2.Controls.Add(this.logTextBox);
+            this.splitContainer1.Size = new System.Drawing.Size(822, 358);
+            this.splitContainer1.SplitterDistance = 290;
+            this.splitContainer1.TabIndex = 7;
+            //
+            // logTextBox
+            //
+            this.logTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.logTextBox.Location = new System.Drawing.Point(0, 0);
+            this.logTextBox.Multiline = true;
+            this.logTextBox.Name = "logTextBox";
+            this.logTextBox.ReadOnly = true;
+            this.logTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.logTextBox.Size = new System.Drawing.Size(822, 64);
+            this.logTextBox.TabIndex = 0;
+            this.logTextBox.Font = new System.Drawing.Font("Consolas", 9F);
+            this.logTextBox.BackColor = System.Drawing.Color.Black;
+            this.logTextBox.ForeColor = System.Drawing.Color.LightGreen;
+            //
             // toolStripContainer1
-            // 
-            // 
+            //
+            //
             // toolStripContainer1.ContentPanel
-            // 
-            this.toolStripContainer1.ContentPanel.Controls.Add(this.Maintab);
+            //
+            this.toolStripContainer1.ContentPanel.Controls.Add(this.splitContainer1);
             this.toolStripContainer1.ContentPanel.Size = new System.Drawing.Size(822, 358);
             this.toolStripContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.toolStripContainer1.Location = new System.Drawing.Point(0, 0);
@@ -70,13 +108,13 @@ namespace EquipMonitor
             this.toolStripContainer1.Size = new System.Drawing.Size(822, 383);
             this.toolStripContainer1.TabIndex = 6;
             this.toolStripContainer1.Text = "toolStripContainer1";
-            // 
+            //
             // toolStripContainer1.TopToolStripPanel
-            // 
+            //
             this.toolStripContainer1.TopToolStripPanel.Controls.Add(this.toolStrip1);
-            // 
+            //
             // toolStrip1
-            // 
+            //
             this.toolStrip1.Dock = System.Windows.Forms.DockStyle.None;
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.ClientNameLabel,
@@ -121,14 +159,14 @@ namespace EquipMonitor
             this.RenameClientButton.Size = new System.Drawing.Size(99, 22);
             this.RenameClientButton.Text = "이름 변경";
             this.RenameClientButton.Click += new System.EventHandler(this.RenameClientButton_Click);
-            // 
+            //
             // toolStripSeparator1
-            // 
+            //
             this.toolStripSeparator1.Name = "toolStripSeparator1";
             this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
-            // 
+            //
             // WebsocketButton
-            // 
+            //
             this.WebsocketButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.WebsocketButton.Image = ((System.Drawing.Image)(resources.GetObject("WebsocketButton.Image")));
             this.WebsocketButton.ImageTransparentColor = System.Drawing.Color.Magenta;
@@ -136,9 +174,9 @@ namespace EquipMonitor
             this.WebsocketButton.Size = new System.Drawing.Size(107, 22);
             this.WebsocketButton.Text = "웹소켓클라이언트";
             this.WebsocketButton.Click += new System.EventHandler(this.WebsocketButton_Click);
-            // 
+            //
             // LogFolderButton
-            // 
+            //
             this.LogFolderButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.LogFolderButton.Image = ((System.Drawing.Image)(resources.GetObject("LogFolderButton.Image")));
             this.LogFolderButton.ImageTransparentColor = System.Drawing.Color.Magenta;
@@ -146,9 +184,9 @@ namespace EquipMonitor
             this.LogFolderButton.Size = new System.Drawing.Size(91, 22);
             this.LogFolderButton.Text = "로그 폴더 보기";
             this.LogFolderButton.Click += new System.EventHandler(this.LogFolderButton_Click);
-            // 
+            //
             // DeleteEquipmentButton
-            // 
+            //
             this.DeleteEquipmentButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.DeleteEquipmentButton.Name = "DeleteEquipmentButton";
             this.DeleteEquipmentButton.Size = new System.Drawing.Size(127, 22);
@@ -163,9 +201,9 @@ namespace EquipMonitor
             this.CopyEquipmentButton.Size = new System.Drawing.Size(115, 22);
             this.CopyEquipmentButton.Text = "클라이언트 복사";
             this.CopyEquipmentButton.Click += new System.EventHandler(this.CopyEquipmentButton_Click);
-            // 
+            //
             // MainForm
-            // 
+            //
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(822, 383);
@@ -173,6 +211,11 @@ namespace EquipMonitor
             this.Name = "MainForm";
             this.Text = "EquipMonitor";
             this.Load += new System.EventHandler(this.Form1_Load);
+            this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel2.ResumeLayout(false);
+            this.splitContainer1.Panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+            this.splitContainer1.ResumeLayout(false);
             this.toolStripContainer1.ContentPanel.ResumeLayout(false);
             this.toolStripContainer1.TopToolStripPanel.ResumeLayout(false);
             this.toolStripContainer1.TopToolStripPanel.PerformLayout();
@@ -187,6 +230,8 @@ namespace EquipMonitor
         #endregion
 
         private System.Windows.Forms.TabControl Maintab;
+        private System.Windows.Forms.SplitContainer splitContainer1;
+        public System.Windows.Forms.TextBox logTextBox;
         private System.Windows.Forms.ToolStripContainer toolStripContainer1;
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripLabel ClientNameLabel;
@@ -200,4 +245,3 @@ namespace EquipMonitor
         private System.Windows.Forms.ToolStripButton CopyEquipmentButton;
     }
 }
-

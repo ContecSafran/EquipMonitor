@@ -62,6 +62,7 @@ namespace EquipMonitor
         }
         private void addEquipment(Equipment equipment)
         {
+            equipment.SetLogTextBox(this.logTextBox);
             System.Windows.Forms.Panel containerPanel = new System.Windows.Forms.Panel();
             containerPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             containerPanel.AutoScroll = true; // 스크롤 활성화

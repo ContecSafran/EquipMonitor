@@ -103,7 +103,33 @@ namespace EquipMonitor
                     UpdateStatusUI(connected);
                 }
             };
+            equipment.OnPacketAdded = (packet) =>
+            {
+                if (this.InvokeRequired)
+                {
+                    this.Invoke(new Action(() => AddPacketToList(packet)));
+                }
+                else
+                {
+                    AddPacketToList(packet);
+                }
+            };
             UpdateStatusUI(false);
+        }
+
+        private void AddPacketToList(PacketInfo packet)
+        {
+            packetListBox.Items.Add(packet);
+            packetListBox.SelectedIndex = packetListBox.Items.Count - 1;
+        }
+
+        private void packetListBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (packetListBox.SelectedItem is PacketInfo packet)
+            {
+                ResponseHexTextBox.Text = SafranByteToMessageDecoder.ByteArrayToString(packet.Data, 0, packet.Data.Length);
+                ResponseAsciiTextBox.Text = Encoding.UTF8.GetString(packet.Data);
+            }
         }
 
         private void UpdateStatusUI(bool connected)
@@ -132,6 +158,7 @@ namespace EquipMonitor
 
         private void clearResponseButton_Click(object sender, EventArgs e)
         {
+            this.packetListBox.Items.Clear();
             this.ResponseHexTextBox.Clear();
             this.ResponseAsciiTextBox.Clear();
         }
@@ -149,6 +176,11 @@ namespace EquipMonitor
             equipment.info.name = newName;
             this.Name = newName;
             WriteEquipmentInfo();
+        }
+
+        public void SetLogTextBox(System.Windows.Forms.TextBox logTextBox)
+        {
+            equipment.LogTextBox = logTextBox;
         }
 
         public void SaveEquipmentInfo()
@@ -196,12 +228,12 @@ namespace EquipMonitor
         {
             if (string.IsNullOrWhiteSpace(equipment.info.ip))
             {
-                equipment.ReceiveAsciiResponse("오류: IP 주소를 입력하세요.");
+                equipment.ReceiveLogResponse("오류: IP 주소를 입력하세요.");
                 return;
             }
             if (equipment.info.port <= 0)
             {
-                equipment.ReceiveAsciiResponse("오류: 유효한 포트 번호를 입력하세요.");
+                equipment.ReceiveLogResponse("오류: 유효한 포트 번호를 입력하세요.");
                 return;
             }
 
@@ -365,7 +397,7 @@ namespace EquipMonitor
             }
             else
             {
-                equipment.ReceiveAsciiResponse("UDP 모드입니다.");
+                equipment.ReceiveLogResponse("UDP 모드입니다.");
             }
         }
 
@@ -374,7 +406,7 @@ namespace EquipMonitor
             if (equipment.info.clientType == constants.ClientType.TCP)
             {
                 await tcpClient.CloseAsync();
-                equipment.ReceiveAsciiResponse("TCP 연결이 해제되었습니다.");
+                equipment.ReceiveLogResponse("TCP 연결이 해제되었습니다.");
             }
         }
 

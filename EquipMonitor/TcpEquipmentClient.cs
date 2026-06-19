@@ -29,13 +29,13 @@ namespace EquipMonitor
                 {
                     equipmentDto.initLogFile();
                     channel = await CreateAndConnectChannelAsync(info, equipmentDto);
-                    equipmentDto.ReceiveAsciiResponse("Client connected to server. ip : " + info.ip + " port : " + info.port);
+                    equipmentDto.ReceiveLogResponse("Client connected to server. ip : " + info.ip + " port : " + info.port);
                     equipmentDto.OnConnectionStateChanged?.Invoke(true);
                 }
             }
             catch (Exception ex)
             {
-                equipmentDto.ReceiveHexResponse(ex.Message);
+                equipmentDto.ReceiveLogResponse(ex.Message);
                 await CloseAsync();
             }
         }
@@ -68,7 +68,7 @@ namespace EquipMonitor
                     if (info.isHex)
                     {
                         byte[] messageBytes = StringToByteArray(info.command.Replace(" ", ""));
-                        equipmentDto.ReceiveHexResponse("hex :" + SafranByteToMessageDecoder.ByteArrayToString(messageBytes, 0, messageBytes.Length));
+                        equipmentDto.AddPacket(messageBytes, true);
                         await channel.WriteAndFlushAsync(Unpooled.WrappedBuffer(messageBytes));
                     }
                     else
@@ -80,16 +80,15 @@ namespace EquipMonitor
                             command = command.Replace("\\r", "\r")
                                              .Replace("\\n", "\n");
                         }
-                        equipmentDto.ReceiveAsciiResponse("send :" + command);
                         byte[] messageBytes = Encoding.UTF8.GetBytes(command);
-                        equipmentDto.ReceiveHexResponse("hex :" + SafranByteToMessageDecoder.ByteArrayToString(messageBytes, 0, messageBytes.Length));
+                        equipmentDto.AddPacket(messageBytes, true);
                         await channel.WriteAndFlushAsync(Unpooled.WrappedBuffer(messageBytes));
                     }
                 }
             }
             catch(Exception ex)
             {
-                equipmentDto.ReceiveHexResponse(ex.Message);
+                equipmentDto.ReceiveLogResponse(ex.Message);
                 await CloseAsync();
             }
         }
@@ -103,15 +102,15 @@ namespace EquipMonitor
                 {
                     equipmentDto.initLogFile();
                     channel = await CreateAndConnectChannelAsync(info, equipmentDto);
-                    equipmentDto.ReceiveHexResponse("Client connected to server.");
+                    equipmentDto.ReceiveLogResponse("Client connected to server.");
                 }
 
-                equipmentDto.ReceiveHexResponse("hex 전송 size : " + data.Length.ToString());
+                equipmentDto.AddPacket(data, true);
                 await channel.WriteAndFlushAsync(Unpooled.WrappedBuffer(data));
             }
             catch (Exception ex)
             {
-                equipmentDto.ReceiveHexResponse(ex.Message);
+                equipmentDto.ReceiveLogResponse(ex.Message);
                 await CloseAsync();
             }
         }

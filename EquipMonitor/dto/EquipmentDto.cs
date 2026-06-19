@@ -28,6 +28,11 @@ namespace EquipMonitor.dto
             get;
             set;
         }
+        public System.Windows.Forms.TextBox LogTextBox
+        {
+            get;
+            set;
+        }
         string logFilePath;
         public void initLogFile()
         {
@@ -65,12 +70,26 @@ namespace EquipMonitor.dto
         public void ReceiveHexResponse(string msg)
         {
             this.ReceiveResponse(msg, ResponseHexTextBox);
-
         }
 
         public void ReceiveAsciiResponse(string msg)
         {
             this.ReceiveResponse(msg, ResponseAsciiTextBox);
+        }
+
+        public void ReceiveLogResponse(string msg)
+        {
+            this.ReceiveResponse(msg, LogTextBox);
+        }
+
+        [JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        public Action<PacketInfo> OnPacketAdded { get; set; }
+
+        public void AddPacket(byte[] data, bool isSend)
+        {
+            var packet = new PacketInfo { Time = DateTime.Now, IsSend = isSend, Data = data };
+            OnPacketAdded?.Invoke(packet);
         }
     }
 }

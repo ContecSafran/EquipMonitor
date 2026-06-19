@@ -124,6 +124,7 @@
     <Compile Include="dto\LayoutSettings.cs" />
     <Compile Include="dto\EquipmentInfo.cs" />
     <Compile Include="dto\EquipmentDto.cs" />
+    <Compile Include="dto\PacketInfo.cs" />
     <Compile Include="LayoutSettingsManager.cs" />
     <Compile Include="Equipment.cs">
       <SubType>UserControl</SubType>

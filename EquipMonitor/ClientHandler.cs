@@ -18,20 +18,9 @@ namespace EquipMonitor
         }
         protected override void ChannelRead0(IChannelHandlerContext ctx, IByteBuffer msg)
         {
-            if (this.equipmentDto.info.isHex)
-            {
-                string receivedMessage = ByteArrayToString(msg.Array, msg.ArrayOffset + msg.ReaderIndex, msg.ReadableBytes);
-                equipmentDto.ReceiveHexResponse("receive : " + receivedMessage);
-
-
-            }
-            else
-            {
-                string receivedMessage = msg.ToString(Encoding.UTF8);
-                equipmentDto.ReceiveAsciiResponse("receive : " + receivedMessage);
-                byte[] messageBytes = Encoding.UTF8.GetBytes(receivedMessage);
-                equipmentDto.ReceiveHexResponse("hex :" + SafranByteToMessageDecoder.ByteArrayToString(messageBytes, 0, messageBytes.Length));
-            }
+            byte[] data = new byte[msg.ReadableBytes];
+            msg.GetBytes(msg.ReaderIndex, data);
+            equipmentDto.AddPacket(data, false);
         }
         public static string ByteArrayToString(byte[] ba, int start, int size)
         {
@@ -51,7 +40,7 @@ namespace EquipMonitor
         }
         public override void ExceptionCaught(IChannelHandlerContext context, Exception exception)
         {
-            equipmentDto.ReceiveHexResponse(exception.Message);
+            equipmentDto.ReceiveLogResponse(exception.Message);
             context.CloseAsync();
         }
         public override void ChannelActive(IChannelHandlerContext context)
