@@ -21,6 +21,7 @@ namespace EquipMonitor
         private System.Windows.Forms.Timer saveTimer;
         private bool isFirstLayout = true;
         private bool isRestoring = false;
+        private int hexGroupSize = 16;
         public Equipment()
         {
             InitializeComponent();
@@ -75,6 +76,8 @@ namespace EquipMonitor
             {
                 this.hexUtil1.Visible = this.isHexMassage.Checked;
             };
+
+            this.hexResponseUtil.TargetTextBox = this.ResponseHexTextBox;
         }
 
         private void InitTimer()
@@ -125,13 +128,62 @@ namespace EquipMonitor
             packetListBox.SelectedIndex = packetListBox.Items.Count - 1;
         }
 
+        public void SetHexGroupSize(int size)
+        {
+            hexGroupSize = size;
+            ResponseHexTextBox.BytesPerLine = size;
+            if (packetListBox.SelectedItem is PacketInfo packet)
+                RefreshPacketView(packet);
+        }
+
+        // HexUtil 연동 시 이 메서드를 교체하면 됩니다.
+        public static string FormatHexView(byte[] data, int bytesPerLine)
+        {
+            if (data == null || data.Length == 0) return string.Empty;
+            int half = bytesPerLine / 2;
+            var sb = new StringBuilder();
+
+            // 열 번호 헤더 (1-based, 오프셋 10자 공백 + 번호)
+            sb.Append(new string(' ', 10));
+            for (int i = 0; i < bytesPerLine; i++)
+            {
+                if (i == half) sb.Append(' ');
+                sb.AppendFormat("{0,2} ", i + 1);
+            }
+            sb.AppendLine();
+
+            // 데이터 줄
+            for (int offset = 0; offset < data.Length; offset += bytesPerLine)
+            {
+                sb.AppendFormat("{0:X8}  ", offset);
+
+                int lineCount = Math.Min(bytesPerLine, data.Length - offset);
+                for (int i = 0; i < bytesPerLine; i++)
+                {
+                    if (i == half) sb.Append(' ');
+                    if (i < lineCount)
+                        sb.AppendFormat("{0:X2} ", data[offset + i]);
+                    else
+                        sb.Append("   ");
+                }
+                sb.AppendLine();
+            }
+            return sb.ToString();
+        }
+
+        private string FormatHex(byte[] data, int groupSize)
+            => FormatHexView(data, groupSize);
+
+        private void RefreshPacketView(PacketInfo packet)
+        {
+            ResponseHexTextBox.Text = FormatHex(packet.Data, hexGroupSize);
+            ResponseAsciiTextBox.Text = Encoding.UTF8.GetString(packet.Data);
+        }
+
         private void packetListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (packetListBox.SelectedItem is PacketInfo packet)
-            {
-                ResponseHexTextBox.Text = SafranByteToMessageDecoder.ByteArrayToString(packet.Data, 0, packet.Data.Length);
-                ResponseAsciiTextBox.Text = Encoding.UTF8.GetString(packet.Data);
-            }
+                RefreshPacketView(packet);
         }
 
         private void UpdateStatusUI(bool connected)
@@ -180,7 +232,7 @@ namespace EquipMonitor
             WriteEquipmentInfo();
         }
 
-        public void SetLogTextBox(System.Windows.Forms.TextBox logTextBox)
+        public void SetLogTextBox(System.Windows.Forms.TextBoxBase logTextBox)
         {
             equipment.LogTextBox = logTextBox;
         }

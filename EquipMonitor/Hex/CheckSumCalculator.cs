@@ -6,9 +6,9 @@ namespace EquipMonitor
 {
     public partial class CheckSumCalculator : UserControl
     {
-        private TextBox _targetTextBox;
+        private TextBoxBase _targetTextBox;
 
-        public TextBox TargetTextBox
+        public TextBoxBase TargetTextBox
         {
             get { return _targetTextBox; }
             set
@@ -58,6 +58,10 @@ namespace EquipMonitor
 
             try
             {
+                // HexRichTextBox인 경우 오프셋 제거
+                if (_targetTextBox is HexRichTextBox hexBox)
+                    selectedText = hexBox.StripOffsets(selectedText);
+
                 // 공백 등 제거하여 순수 헥사 문자열 추출
                 string hexOnly = selectedText.Replace(" ", "").Replace("\r", "").Replace("\n", "");
                 

@@ -115,6 +115,13 @@ namespace EquipMonitor
             //
             // toolStrip1
             //
+            this.hexGroupLabel = new System.Windows.Forms.ToolStripLabel();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.hexBtn4  = new System.Windows.Forms.ToolStripButton();
+            this.hexBtn8  = new System.Windows.Forms.ToolStripButton();
+            this.hexBtn16 = new System.Windows.Forms.ToolStripButton();
+            this.hexBtn32 = new System.Windows.Forms.ToolStripButton();
+            this.hexBtn64 = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1.Dock = System.Windows.Forms.DockStyle.None;
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.ClientNameLabel,
@@ -125,7 +132,14 @@ namespace EquipMonitor
             this.WebsocketButton,
             this.LogFolderButton,
             this.DeleteEquipmentButton,
-            this.CopyEquipmentButton});
+            this.CopyEquipmentButton,
+            this.toolStripSeparator2,
+            this.hexGroupLabel,
+            this.hexBtn4,
+            this.hexBtn8,
+            this.hexBtn16,
+            this.hexBtn32,
+            this.hexBtn64});
             this.toolStrip1.Location = new System.Drawing.Point(3, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(544, 25);
@@ -202,6 +216,57 @@ namespace EquipMonitor
             this.CopyEquipmentButton.Text = "클라이언트 복사";
             this.CopyEquipmentButton.Click += new System.EventHandler(this.CopyEquipmentButton_Click);
             //
+            // toolStripSeparator2
+            //
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
+            //
+            // hexGroupLabel
+            //
+            this.hexGroupLabel.Name = "hexGroupLabel";
+            this.hexGroupLabel.Text = "Hex/line:";
+            //
+            // hexBtn4
+            //
+            this.hexBtn4.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.hexBtn4.Name = "hexBtn4";
+            this.hexBtn4.Text = "4";
+            this.hexBtn4.ToolTipText = "4 bytes per line";
+            this.hexBtn4.Click += new System.EventHandler(this.hexBytesPerLine_Click);
+            //
+            // hexBtn8
+            //
+            this.hexBtn8.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.hexBtn8.Name = "hexBtn8";
+            this.hexBtn8.Text = "8";
+            this.hexBtn8.ToolTipText = "8 bytes per line";
+            this.hexBtn8.Click += new System.EventHandler(this.hexBytesPerLine_Click);
+            //
+            // hexBtn16
+            //
+            this.hexBtn16.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.hexBtn16.Name = "hexBtn16";
+            this.hexBtn16.Text = "16";
+            this.hexBtn16.ToolTipText = "16 bytes per line";
+            this.hexBtn16.Checked = true;
+            this.hexBtn16.Click += new System.EventHandler(this.hexBytesPerLine_Click);
+            //
+            // hexBtn32
+            //
+            this.hexBtn32.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.hexBtn32.Name = "hexBtn32";
+            this.hexBtn32.Text = "32";
+            this.hexBtn32.ToolTipText = "32 bytes per line";
+            this.hexBtn32.Click += new System.EventHandler(this.hexBytesPerLine_Click);
+            //
+            // hexBtn64
+            //
+            this.hexBtn64.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.hexBtn64.Name = "hexBtn64";
+            this.hexBtn64.Text = "64";
+            this.hexBtn64.ToolTipText = "64 bytes per line";
+            this.hexBtn64.Click += new System.EventHandler(this.hexBytesPerLine_Click);
+            //
             // MainForm
             //
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
@@ -243,5 +308,12 @@ namespace EquipMonitor
         private System.Windows.Forms.ToolStripButton LogFolderButton;
         private System.Windows.Forms.ToolStripButton DeleteEquipmentButton;
         private System.Windows.Forms.ToolStripButton CopyEquipmentButton;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ToolStripLabel hexGroupLabel;
+        private System.Windows.Forms.ToolStripButton hexBtn4;
+        private System.Windows.Forms.ToolStripButton hexBtn8;
+        private System.Windows.Forms.ToolStripButton hexBtn16;
+        private System.Windows.Forms.ToolStripButton hexBtn32;
+        private System.Windows.Forms.ToolStripButton hexBtn64;
     }
 }

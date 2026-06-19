@@ -83,6 +83,7 @@ namespace EquipMonitor
         private void addEquipment(Equipment equipment)
         {
             equipment.SetLogTextBox(this.logTextBox);
+            equipment.SetHexGroupSize(GetCurrentHexGroupSize());
             System.Windows.Forms.Panel containerPanel = new System.Windows.Forms.Panel();
             containerPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             containerPanel.AutoScroll = true; // 스크롤 활성화
@@ -171,6 +172,27 @@ namespace EquipMonitor
                 }
             }
             return null;
+        }
+
+        private int GetCurrentHexGroupSize()
+        {
+            foreach (var btn in new[] { hexBtn4, hexBtn8, hexBtn16, hexBtn32, hexBtn64 })
+                if (btn.Checked && int.TryParse(btn.Text, out int v)) return v;
+            return 16;
+        }
+
+        private void hexBytesPerLine_Click(object sender, EventArgs e)
+        {
+            var clicked = (ToolStripButton)sender;
+            foreach (var btn in new[] { hexBtn4, hexBtn8, hexBtn16, hexBtn32, hexBtn64 })
+                btn.Checked = (btn == clicked);
+
+            int groupSize = GetCurrentHexGroupSize();
+            foreach (TabPage tab in Maintab.TabPages)
+            {
+                Equipment eq = FindEquipment(tab);
+                eq?.SetHexGroupSize(groupSize);
+            }
         }
 
         private void CopyEquipmentButton_Click(object sender, EventArgs e)

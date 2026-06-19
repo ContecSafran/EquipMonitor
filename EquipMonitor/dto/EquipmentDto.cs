@@ -18,17 +18,17 @@ namespace EquipMonitor.dto
         [System.Text.Json.Serialization.JsonIgnore]
         public Action<bool> OnConnectionStateChanged { get; set; }
 
-        public System.Windows.Forms.TextBox ResponseHexTextBox
+        public System.Windows.Forms.TextBoxBase ResponseHexTextBox
         {
             get;
             set;
         }
-        public System.Windows.Forms.TextBox ResponseAsciiTextBox
+        public System.Windows.Forms.TextBoxBase ResponseAsciiTextBox
         {
             get;
             set;
         }
-        public System.Windows.Forms.TextBox LogTextBox
+        public System.Windows.Forms.TextBoxBase LogTextBox
         {
             get;
             set;
@@ -38,7 +38,7 @@ namespace EquipMonitor.dto
         {
             logFilePath = MainForm.logPath + string.Format("{0}_{1}.txt", DateTime.Now.ToString("yyyyMMddHHmmss"), this.info.name);
         }
-        public void ReceiveResponse(string msg, System.Windows.Forms.TextBox textBox)
+        public void ReceiveResponse(string msg, System.Windows.Forms.TextBoxBase textBox)
         {
             if (textBox != null)
             {

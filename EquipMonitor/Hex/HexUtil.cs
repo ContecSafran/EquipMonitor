@@ -8,13 +8,13 @@ namespace EquipMonitor
         private DataConverter dataConverter;
         private CheckSumCalculator checkSumCalculator;
 
-        public TextBox TargetTextBox
+        public TextBoxBase TargetTextBox
         {
             get { return dataConverter?.TargetTextBox; }
-            set 
-            { 
-                if (dataConverter != null) 
-                    dataConverter.TargetTextBox = value; 
+            set
+            {
+                if (dataConverter != null)
+                    dataConverter.TargetTextBox = value;
                 if (checkSumCalculator != null)
                     checkSumCalculator.TargetTextBox = value;
             }
