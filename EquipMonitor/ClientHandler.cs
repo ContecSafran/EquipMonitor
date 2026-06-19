@@ -38,10 +38,10 @@ namespace EquipMonitor
             }
             return hex.ToString();
         }
-        public override void ExceptionCaught(IChannelHandlerContext context, Exception exception)
+        public override async void ExceptionCaught(IChannelHandlerContext context, Exception exception)
         {
             equipmentDto.ReceiveLogResponse(exception.Message);
-            context.CloseAsync();
+            await context.CloseAsync();
         }
         public override void ChannelActive(IChannelHandlerContext context)
         {

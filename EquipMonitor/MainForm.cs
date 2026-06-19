@@ -19,6 +19,26 @@ namespace EquipMonitor
         {
             InitializeComponent();
             this.FormClosing += Form1_FormClosing;
+            this.ResizeBegin += MainForm_ResizeBegin;
+            this.ResizeEnd += MainForm_ResizeEnd;
+            this.DoubleBuffered = true;
+            SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
+        }
+
+        private void MainForm_ResizeBegin(object sender, EventArgs e)
+        {
+            this.SuspendLayout();
+            foreach (TabPage tab in Maintab.TabPages)
+                foreach (Control c in tab.Controls)
+                    c.SuspendLayout();
+        }
+
+        private void MainForm_ResizeEnd(object sender, EventArgs e)
+        {
+            foreach (TabPage tab in Maintab.TabPages)
+                foreach (Control c in tab.Controls)
+                    c.ResumeLayout(true);
+            this.ResumeLayout(true);
         }
 
         private void Form1_Load(object sender, EventArgs e)

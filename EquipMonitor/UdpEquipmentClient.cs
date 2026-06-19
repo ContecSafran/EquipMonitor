@@ -24,6 +24,8 @@ namespace EquipMonitor
             {
                 equipmentDto.ReceiveLogResponse("Client connected to server.");
 
+                if (string.IsNullOrEmpty(info.command)) return;
+
                 if (info.isHex)
                 {
                     byte[] messageBytes = StringToByteArray(info.command.Replace(" ", ""));

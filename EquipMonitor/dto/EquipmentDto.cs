@@ -36,7 +36,7 @@ namespace EquipMonitor.dto
         string logFilePath;
         public void initLogFile()
         {
-            logFilePath = MainForm.logPath + string.Format("{0}_{1}.txt", DateTime.Now.ToString("yyyyMMddhhmmss"), this.info.name);
+            logFilePath = MainForm.logPath + string.Format("{0}_{1}.txt", DateTime.Now.ToString("yyyyMMddHHmmss"), this.info.name);
         }
         public void ReceiveResponse(string msg, System.Windows.Forms.TextBox textBox)
         {
@@ -55,14 +55,18 @@ namespace EquipMonitor.dto
                     string formattedMsg = msg.Replace("\r\n", "\n").Replace("\n", "\r\n");
 
                     string Time = DateTime.Now.ToString("[yyyy/MM/dd HH:mm:ss]");
-                    textBox.Text = textBox.Text + "\r\n" + Time + "\t" + formattedMsg;
+                    const int MaxTextLength = 200000;
+                    if (textBox.TextLength > MaxTextLength)
+                        textBox.Text = textBox.Text.Substring(textBox.TextLength - MaxTextLength / 2);
+                    textBox.AppendText("\r\n" + Time + "\t" + formattedMsg);
                     textBox.Select(textBox.Text.Length, 0);
                     textBox.ScrollToCaret();
                     if (!string.IsNullOrEmpty(logFilePath))
                     {
-                        StreamWriter sw = new StreamWriter(logFilePath, true);
-                        sw.WriteLine(formattedMsg);
-                        sw.Close();
+                        using (StreamWriter sw = new StreamWriter(logFilePath, true))
+                        {
+                            sw.WriteLine(formattedMsg);
+                        }
                     }
                 }
             }
@@ -88,7 +92,22 @@ namespace EquipMonitor.dto
 
         public void AddPacket(byte[] data, bool isSend)
         {
+            if (data == null || data.Length == 0) return;
             var packet = new PacketInfo { Time = DateTime.Now, IsSend = isSend, Data = data };
+
+            if (!string.IsNullOrEmpty(logFilePath))
+            {
+                string direction = isSend ? "TX" : "RX";
+                string hexStr = BitConverter.ToString(data).Replace("-", " ");
+                string asciiStr = Encoding.UTF8.GetString(data);
+                string timeStr = packet.Time.ToString("[yyyy/MM/dd HH:mm:ss.fff]");
+                using (StreamWriter sw = new StreamWriter(logFilePath, true))
+                {
+                    sw.WriteLine($"{timeStr} [{direction}] HEX   : {hexStr}");
+                    sw.WriteLine($"{timeStr} [{direction}] ASCII : {asciiStr}");
+                }
+            }
+
             OnPacketAdded?.Invoke(packet);
         }
     }

@@ -24,6 +24,8 @@ namespace EquipMonitor
         public Equipment()
         {
             InitializeComponent();
+            this.DoubleBuffered = true;
+            SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
             this.commandInputSplitContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
             InitTimer();
             equipment.info.name = "1";
@@ -249,14 +251,12 @@ namespace EquipMonitor
         }
         void WriteEquipmentInfo()
         {
-            StreamWriter writer = File.CreateText(MainForm.EquipmentPath + this.equipment.info.name + ".txt");
-            
             this.equipment.info.ip = this.ipText.Text;
             int port = 0;
             Int32.TryParse(this.portTextBox.Text, out port);
             this.equipment.info.port = port;
             this.equipment.info.isHex = this.isHexMassage.Checked;
-            
+
             this.equipment.info.commands.Clear();
             foreach (var item in this.commandListBox.Items)
             {
@@ -275,17 +275,24 @@ namespace EquipMonitor
             this.equipment.info.tail = this.tailTextBox.Text;
             var options = new JsonSerializerOptions { WriteIndented = true };
             string jsonString = System.Text.Json.JsonSerializer.Serialize(equipment.info, options);
-            writer.Write(jsonString);
-            writer.Close();
+            using (StreamWriter writer = File.CreateText(MainForm.EquipmentPath + this.equipment.info.name + ".txt"))
+            {
+                writer.Write(jsonString);
+            }
         }
         void ReadEquipmentInfo(FileInfo fi)
         {
-            // 2. 파일 내용 읽기
-            string jsonString = File.ReadAllText(fi.FullName);
-
-            // 3. 역직렬화 (JSON -> 객체)
-            // <T> 부분에 복원할 클래스 명을 넣습니다.
-            this.equipment.info = System.Text.Json.JsonSerializer.Deserialize<EquipmentInfo>(jsonString);
+            try
+            {
+                string jsonString = File.ReadAllText(fi.FullName);
+                var parsed = System.Text.Json.JsonSerializer.Deserialize<EquipmentInfo>(jsonString);
+                if (parsed != null)
+                    this.equipment.info = parsed;
+            }
+            catch (Exception)
+            {
+                // 파일 손상 시 기본값 유지
+            }
 
             this.equipment.info.name = Path.GetFileNameWithoutExtension(fi.FullName);
 
