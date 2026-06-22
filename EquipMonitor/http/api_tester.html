@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>API Tester</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:monospace;font-size:13px;background:#f5f5f5;color:#1a1a1a}
+select,input,textarea,button{font-family:monospace;font-size:13px;outline:none}
+input,select,textarea{background:#fff;color:#1a1a1a;border:1px solid #ddd;border-radius:6px;padding:0 8px;height:34px}
+input:focus,select:focus,textarea:focus{border-color:#888}
+textarea{height:auto;padding:8px;resize:vertical}
+button{cursor:pointer;border-radius:6px;border:1px solid #ddd;background:#fff;color:#333;padding:0 12px;height:34px}
+button:hover{background:#f0f0f0}
+button:disabled{opacity:0.4;cursor:not-allowed}
+
+.wrap{display:flex;flex-direction:column;min-height:100vh}
+.toolbar{display:flex;gap:8px;padding:12px;border-bottom:1px solid #ddd;align-items:center;background:#fafafa}
+select#method{width:110px;font-weight:600}
+input#url{flex:1}
+button#sendBtn{background:#1a6ef5;color:#fff;border-color:#1a6ef5;padding:0 20px;font-weight:500}
+button#sendBtn:hover{background:#1558cc}
+
+.tabs{display:flex;padding:0 12px;border-bottom:1px solid #ddd;background:#fff}
+.tab{padding:8px 14px;cursor:pointer;font-size:12px;color:#888;border-bottom:2px solid transparent;user-select:none}
+.tab.active{color:#1a1a1a;border-bottom:2px solid #1a1a1a}
+.panel{padding:12px;display:none;flex-direction:column;gap:8px}
+.panel.active{display:flex}
+.kv-row{display:flex;gap:6px;align-items:center}
+.kv-row input{flex:1}
+.kv-row .del{width:28px;height:28px;padding:0;font-size:16px;color:#aaa;flex-shrink:0}
+.add-btn{align-self:flex-start;font-size:12px;padding:4px 10px;height:auto;color:#555}
+
+.res-area{display:flex;flex-direction:column;border-top:3px solid #e0e0e0}
+.res-meta{display:flex;gap:12px;padding:8px 12px;background:#fafafa;border-bottom:1px solid #ddd;align-items:center;font-size:12px;flex-wrap:wrap}
+.badge{padding:2px 8px;border-radius:5px;font-weight:500;font-size:12px}
+.s2{background:#e6f4ea;color:#1e7e34}.s3{background:#fff3cd;color:#856404}
+.s4,.s5{background:#fde8e8;color:#a00}.s0{background:#eee;color:#666}
+pre{white-space:pre-wrap;word-break:break-all;padding:12px;font-size:12px;min-height:120px;max-height:300px;overflow-y:auto;background:#fafafa;color:#1a1a1a;font-family:monospace}
+
+.hist-wrap{border-top:1px solid #ddd;background:#fafafa;margin-top:auto}
+.hist-hdr{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;font-size:12px;color:#666;user-select:none}
+.hist-hdr-left{display:flex;align-items:center;gap:8px;cursor:pointer;flex:1}
+.hist-actions{display:flex;gap:6px}
+.hist-list{max-height:180px;overflow-y:auto;display:none}
+.hist-item{display:flex;align-items:center;gap:8px;padding:6px 12px;cursor:pointer;border-bottom:1px solid #eee;font-size:12px}
+.hist-item:hover{background:#fff}
+.m-badge{font-size:10px;padding:1px 6px;border-radius:4px;font-weight:600;min-width:44px;text-align:center}
+.GET{background:#dbeafe;color:#1d4ed8}.POST{background:#dcfce7;color:#166534}
+.PUT{background:#fef9c3;color:#854d0e}.DELETE{background:#fee2e2;color:#991b1b}
+.PATCH{background:#fce7f3;color:#9d174d}.HEAD{background:#f1f5f9;color:#475569}
+.OPTIONS{background:#ede9fe;color:#5b21b6}
+.url-txt{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#666}
+.ts{font-size:10px;color:#aaa;white-space:nowrap}
+.loader{display:none;width:16px;height:16px;border:2px solid #ddd;border-top-color:#1a6ef5;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+.icon-btn{display:flex;align-items:center;gap:4px;font-size:12px;padding:3px 8px;height:auto;white-space:nowrap}
+.icon-btn.danger:hover{background:#fde8e8;color:#a00;border-color:#f5c6c6}
+.toast{position:fixed;bottom:16px;right:16px;background:#e6f4ea;color:#1e7e34;border:1px solid #a8d5b5;border-radius:6px;padding:8px 14px;font-size:12px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:999}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="toast" id="toast"></div>
+<div class="wrap">
+  <div class="toolbar">
+    <select id="method">
+      <option>GET</option><option>POST</option><option>PUT</option>
+      <option>DELETE</option><option>PATCH</option><option>HEAD</option><option>OPTIONS</option>
+    </select>
+    <input id="url" type="text" placeholder="http://localhost/api" value="http://localhost/api" />
+    <div class="loader" id="loader"></div>
+    <button id="sendBtn"><i class="ti ti-send"></i> Send</button>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px;padding:6px 12px;background:#fff8e1;border-bottom:1px solid #ffe082;font-size:12px;color:#795548">
+    <label style="display:flex;align-items:center;gap:6px;cursor:pointer">
+      <input type="checkbox" id="useProxy" checked>
+      <span><b>로컬 프록시 사용</b> (CORS 우회)</span>
+    </label>
+    <span style="color:#aaa">포트:</span>
+    <input type="number" id="proxyPort" value="3000" style="width:70px;height:26px;font-size:12px">
+    <span style="color:#aaa">|</span>
+    <span>프록시 실행: <code style="background:#f5f5f5;padding:2px 6px;border-radius:4px">start.bat</code> 더블클릭</span>
+  </div>
+
+  <div>
+    <div class="tabs" id="reqTabs">
+      <div class="tab active" data-tab="params">Params</div>
+      <div class="tab" data-tab="headers">Headers</div>
+      <div class="tab" data-tab="body">Body</div>
+      <div class="tab" data-tab="auth">Auth</div>
+    </div>
+    <div class="panel active" id="tab-params">
+      <div style="font-size:11px;color:#aaa;margin-bottom:4px">Query Parameters</div>
+      <div id="paramRows"></div>
+      <button class="add-btn" onclick="addRow('paramRows')"><i class="ti ti-plus"></i> Add</button>
+    </div>
+    <div class="panel" id="tab-headers">
+      <div style="font-size:11px;color:#aaa;margin-bottom:4px">Request Headers</div>
+      <div id="headerRows"></div>
+      <button class="add-btn" onclick="addRow('headerRows')"><i class="ti ti-plus"></i> Add</button>
+    </div>
+    <div class="panel" id="tab-body">
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+        <span style="font-size:11px;color:#aaa">Content-Type</span>
+        <select id="contentType" style="width:220px;height:28px;font-size:12px">
+          <option value="application/json">JSON</option>
+          <option value="application/x-www-form-urlencoded">Form URL Encoded</option>
+          <option value="text/plain">Text</option>
+          <option value="application/xml">XML</option>
+        </select>
+        <button class="add-btn" onclick="formatJson()" style="margin-left:auto">Format JSON</button>
+      </div>
+      <textarea id="bodyInput" rows="6" placeholder='{"key": "value"}'></textarea>
+    </div>
+    <div class="panel" id="tab-auth">
+      <div style="font-size:11px;color:#aaa;margin-bottom:4px">Authorization</div>
+      <select id="authType" style="width:160px;font-size:12px;height:32px">
+        <option value="none">No Auth</option>
+        <option value="bearer">Bearer Token</option>
+        <option value="basic">Basic Auth</option>
+        <option value="apikey">API Key</option>
+      </select>
+      <div id="authFields" style="display:flex;flex-direction:column;gap:8px;margin-top:8px"></div>
+    </div>
+  </div>
+
+  <div class="res-area">
+    <div class="res-meta">
+      <span style="color:#888">Response</span>
+      <span id="statusBadge" class="badge s0">—</span>
+      <span id="timeBadge" style="color:#888"></span>
+      <span id="sizeBadge" style="color:#888"></span>
+      <div style="margin-left:auto;display:flex;gap:6px">
+        <button class="icon-btn" onclick="copyRes()"><i class="ti ti-copy"></i> Copy</button>
+        <button class="icon-btn" onclick="downloadRes()"><i class="ti ti-download"></i> Save Response</button>
+      </div>
+    </div>
+    <div class="tabs" id="resTabs">
+      <div class="tab active" data-tab="res-body">Body</div>
+      <div class="tab" data-tab="res-headers">Headers</div>
+    </div>
+    <div class="panel active" id="tab-res-body">
+      <pre id="resBody">Send a request to see the response.</pre>
+    </div>
+    <div class="panel" id="tab-res-headers">
+      <pre id="resHeaders">—</pre>
+    </div>
+  </div>
+
+  <div class="hist-wrap">
+    <div class="hist-hdr">
+      <div class="hist-hdr-left" onclick="toggleHist()">
+        <i class="ti ti-history"></i>
+        <span>History <span id="histCount" style="font-size:11px;color:#aaa">(0)</span></span>
+        <span id="histArrow"><i class="ti ti-chevron-down"></i></span>
+      </div>
+      <div class="hist-actions">
+        <button class="icon-btn" onclick="exportHistory()" id="exportBtn" disabled>
+          <i class="ti ti-file-download"></i> Export JSON
+        </button>
+        <button class="icon-btn danger" onclick="clearHistory()" id="clearBtn" disabled>
+          <i class="ti ti-trash"></i> Clear
+        </button>
+      </div>
+    </div>
+    <div class="hist-list" id="histList"></div>
+  </div>
+</div>
+
+<script>
+let history=[];
+let histOpen=false;
+let lastResText='';
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+function addRow(containerId,k='',v=''){
+  const c=document.getElementById(containerId);
+  const d=document.createElement('div');d.className='kv-row';
+  d.innerHTML=`<input type="text" placeholder="Key" value="${k}"><input type="text" placeholder="Value" value="${v}"><button class="del" onclick="this.parentNode.remove()">×</button>`;
+  c.appendChild(d);
+}
+
+function getRows(id){
+  const rows={};
+  document.getElementById(id).querySelectorAll('.kv-row').forEach(r=>{
+    const [k,v]=r.querySelectorAll('input');
+    if(k.value.trim()) rows[k.value.trim()]=v.value.trim();
+  });
+  return rows;
+}
+
+function getAuthSnapshot(){
+  const type=document.getElementById('authType').value;
+  if(type==='none') return {type:'none'};
+  if(type==='bearer'){const t=document.getElementById('bearerToken');return {type:'bearer',token:t?t.value:''};}
+  if(type==='basic'){const u=document.getElementById('basicUser'),p=document.getElementById('basicPass');return {type:'basic',username:u?u.value:'',password:p?p.value:''};}
+  if(type==='apikey'){const n=document.getElementById('apiKeyName'),v=document.getElementById('apiKeyValue');return {type:'apikey',headerName:n?n.value:'',value:v?v.value:''};}
+  return {type};
+}
+
+function applyAuth(headers){
+  const type=document.getElementById('authType').value;
+  if(type==='bearer'){const t=document.getElementById('bearerToken');if(t&&t.value)headers['Authorization']='Bearer '+t.value;}
+  else if(type==='basic'){const u=document.getElementById('basicUser'),p=document.getElementById('basicPass');if(u&&p)headers['Authorization']='Basic '+btoa(u.value+':'+p.value);}
+  else if(type==='apikey'){const n=document.getElementById('apiKeyName'),v=document.getElementById('apiKeyValue');if(n&&v&&n.value)headers[n.value]=v.value;}
+}
+
+function formatJson(){
+  const ta=document.getElementById('bodyInput');
+  try{ta.value=JSON.stringify(JSON.parse(ta.value),null,2);}
+  catch(e){alert('JSON parse error: '+e.message);}
+}
+
+function copyRes(){
+  navigator.clipboard.writeText(document.getElementById('resBody').textContent)
+    .then(()=>showToast('✓ 응답이 클립보드에 복사되었습니다'));
+}
+
+function downloadRes(){
+  if(!lastResText){showToast('먼저 요청을 보내주세요');return;}
+  let ext='txt',mime='text/plain';
+  try{JSON.parse(lastResText);ext='json';mime='application/json';}catch(e){}
+  const slug=document.getElementById('url').value.replace(/[^a-zA-Z0-9]/g,'_').slice(0,30);
+  triggerDownload(lastResText,`response_${slug}_${Date.now()}.${ext}`,mime);
+  showToast('✓ 응답 파일 저장됨');
+}
+
+function exportHistory(){
+  if(!history.length){showToast('히스토리가 없습니다');return;}
+  const fname=`api_history_${new Date().toISOString().slice(0,10)}.json`;
+  triggerDownload(JSON.stringify(history,null,2),fname,'application/json');
+  showToast(`✓ ${fname} 저장됨 (${history.length}건)`);
+}
+
+function triggerDownload(content,filename,mime){
+  const blob=new Blob([content],{type:mime});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);a.download=filename;a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function clearHistory(){
+  if(!history.length)return;
+  if(!confirm(`히스토리 ${history.length}건을 모두 삭제할까요?`))return;
+  history=[];renderHist();showToast('✓ 히스토리가 삭제되었습니다');
+}
+
+function toggleHist(){
+  histOpen=!histOpen;
+  document.getElementById('histList').style.display=histOpen?'block':'none';
+  document.getElementById('histArrow').innerHTML=histOpen?'<i class="ti ti-chevron-up"></i>':'<i class="ti ti-chevron-down"></i>';
+}
+
+function addHistory(method,url,status,ms,reqBody,resBody,authSnapshot){
+  history.unshift({
+    method,url,status,ms,
+    ts:new Date().toISOString(),
+    tsDisplay:new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit',second:'2-digit'}),
+    request:{headers:getRows('headerRows'),params:getRows('paramRows'),body:reqBody,auth:authSnapshot},
+    response:{status,body:resBody}
+  });
+  if(history.length>100)history.pop();
+  renderHist();
+}
+
+function renderHist(){
+  const el=document.getElementById('histList');
+  const count=history.length;
+  document.getElementById('histCount').textContent=`(${count})`;
+  document.getElementById('exportBtn').disabled=count===0;
+  document.getElementById('clearBtn').disabled=count===0;
+  el.innerHTML=history.map((h,i)=>`
+    <div class="hist-item" onclick="loadHist(${i})">
+      <span class="m-badge ${h.method}">${h.method}</span>
+      <span class="url-txt" title="${h.url}">${h.url}</span>
+      <span class="badge ${h.status>=500?'s5':h.status>=400?'s4':h.status>=300?'s3':'s2'}" style="font-size:11px">${h.status}</span>
+      <span class="ts">${h.ms}ms</span>
+      <span class="ts">${h.tsDisplay}</span>
+    </div>`).join('');
+}
+
+function loadHist(i){
+  const h=history[i];
+  document.getElementById('method').value=h.method;
+  document.getElementById('url').value=h.url;
+  if(h.request.body)document.getElementById('bodyInput').value=h.request.body;
+  showToast('✓ 요청이 불러와졌습니다');
+}
+
+document.getElementById('authType').addEventListener('change',function(){
+  const af=document.getElementById('authFields');af.innerHTML='';
+  if(this.value==='bearer'){
+    af.innerHTML='<input type="text" id="bearerToken" placeholder="Bearer Token">';
+  } else if(this.value==='basic'){
+    af.innerHTML='<input type="text" id="basicUser" placeholder="Username"><input type="password" id="basicPass" placeholder="Password">';
+  } else if(this.value==='apikey'){
+    af.innerHTML='<input type="text" id="apiKeyName" placeholder="Header name (e.g. X-API-Key)"><input type="text" id="apiKeyValue" placeholder="Key value">';
+  }
+});
+
+document.querySelectorAll('.tabs').forEach(tabGroup=>{
+  tabGroup.querySelectorAll('.tab').forEach(tab=>{
+    tab.addEventListener('click',function(){
+      const id=this.dataset.tab;
+      tabGroup.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+      this.classList.add('active');
+      tabGroup.parentElement.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+      const target=document.getElementById('tab-'+id);
+      if(target)target.classList.add('active');
+    });
+  });
+});
+
+document.getElementById('sendBtn').addEventListener('click',async()=>{
+  let url=document.getElementById('url').value.trim();
+  if(!url){alert('URL을 입력하세요');return;}
+  if(!/^https?:\/\//.test(url))url='https://'+url;
+
+  const method=document.getElementById('method').value;
+  const params=getRows('paramRows');
+  const headers=getRows('headerRows');
+  const ct=document.getElementById('contentType').value;
+  const body=document.getElementById('bodyInput').value.trim();
+  const authSnapshot=getAuthSnapshot();
+
+  if(Object.keys(params).length){
+    const u=new URL(url);
+    Object.entries(params).forEach(([k,v])=>u.searchParams.set(k,v));
+    url=u.toString();
+  }
+
+  applyAuth(headers);
+  if(body&&!['GET','HEAD','OPTIONS'].includes(method))headers['Content-Type']=ct;
+
+  const useProxy=document.getElementById('useProxy').checked;
+  const proxyPort=document.getElementById('proxyPort').value||'3000';
+  let fetchUrl=url;
+  if(useProxy){
+    headers['x-target-url']=url;
+    fetchUrl='http://localhost:'+proxyPort;
+  }
+
+  const opts={method,headers};
+  if(body&&!['GET','HEAD','OPTIONS'].includes(method))opts.body=body;
+
+  document.getElementById('loader').style.display='block';
+  document.getElementById('sendBtn').disabled=true;
+  document.getElementById('resBody').textContent='Sending...';
+  document.getElementById('statusBadge').className='badge s0';
+  document.getElementById('statusBadge').textContent='...';
+  document.getElementById('timeBadge').textContent='';
+  document.getElementById('sizeBadge').textContent='';
+
+  const t0=performance.now();
+  try{
+    const res=await fetch(fetchUrl,opts);
+    const ms=Math.round(performance.now()-t0);
+    const text=await res.text();
+    lastResText=text;
+    const size=new Blob([text]).size;
+    const sc=res.status;
+
+    document.getElementById('statusBadge').textContent=sc+' '+res.statusText;
+    document.getElementById('statusBadge').className='badge '+(sc>=500?'s5':sc>=400?'s4':sc>=300?'s3':'s2');
+    document.getElementById('timeBadge').textContent=ms+'ms';
+    document.getElementById('sizeBadge').textContent=size>1024?(size/1024).toFixed(1)+'KB':size+'B';
+
+    let display=text;
+    try{display=JSON.stringify(JSON.parse(text),null,2);}catch(e){}
+    document.getElementById('resBody').textContent=display;
+
+    let hdrs='';
+    res.headers.forEach((v,k)=>hdrs+=k+': '+v+'\n');
+    document.getElementById('resHeaders').textContent=hdrs||'(no headers)';
+
+    addHistory(method,url,sc,ms,body,text,authSnapshot);
+  } catch(e){
+    lastResText='';
+    document.getElementById('resBody').textContent='Error: '+e.message+'\n\n(CORS 정책으로 차단되었을 수 있습니다.)';
+    document.getElementById('statusBadge').textContent='Error';
+    document.getElementById('statusBadge').className='badge s4';
+  } finally{
+    document.getElementById('loader').style.display='none';
+    document.getElementById('sendBtn').disabled=false;
+  }
+});
+
+addRow('headerRows','Accept','application/json');
+</script>
+</body>
+</html>
