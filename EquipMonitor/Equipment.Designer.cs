@@ -77,8 +77,8 @@ namespace EquipMonitor
             this.logTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
             this.packetListBox = new System.Windows.Forms.ListBox();
             this.hexViewPanel = new System.Windows.Forms.Panel();
-            this.ResponseHexTextBox = new HexRichTextBox();
             this.hexResponseUtil = new EquipMonitor.HexUtil();
+            this.ResponseHexTextBox = new EquipMonitor.HexRichTextBox();
             this.ResponseAsciiTextBox = new System.Windows.Forms.TextBox();
             this.EquipmentTableLayout.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -656,32 +656,39 @@ namespace EquipMonitor
             this.packetListBox.SelectedIndexChanged += new System.EventHandler(this.packetListBox_SelectedIndexChanged);
             // 
             // hexViewPanel
-            //
+            // 
             this.hexViewPanel.Controls.Add(this.hexResponseUtil);
             this.hexViewPanel.Controls.Add(this.ResponseHexTextBox);
             this.hexViewPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.hexViewPanel.Location = new System.Drawing.Point(234, 3);
             this.hexViewPanel.Name = "hexViewPanel";
-            //
+            this.hexViewPanel.Size = new System.Drawing.Size(340, 154);
+            this.hexViewPanel.TabIndex = 13;
+            // 
             // hexResponseUtil
-            //
+            // 
             this.hexResponseUtil.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.hexResponseUtil.Location = new System.Drawing.Point(0, 124);
             this.hexResponseUtil.Name = "hexResponseUtil";
             this.hexResponseUtil.Size = new System.Drawing.Size(340, 30);
             this.hexResponseUtil.TabIndex = 13;
-            //
+            this.hexResponseUtil.TargetTextBox = null;
+            // 
             // ResponseHexTextBox
-            //
+            // 
+            this.ResponseHexTextBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(30)))));
+            this.ResponseHexTextBox.BytesPerLine = 16;
             this.ResponseHexTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ResponseHexTextBox.Font = new System.Drawing.Font("Consolas", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ResponseHexTextBox.Location = new System.Drawing.Point(234, 3);
+            this.ResponseHexTextBox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.ResponseHexTextBox.Location = new System.Drawing.Point(0, 0);
             this.ResponseHexTextBox.Name = "ResponseHexTextBox";
+            this.ResponseHexTextBox.OffsetLength = 10;
             this.ResponseHexTextBox.ReadOnly = true;
-            this.ResponseHexTextBox.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Both;
             this.ResponseHexTextBox.Size = new System.Drawing.Size(340, 154);
             this.ResponseHexTextBox.TabIndex = 10;
+            this.ResponseHexTextBox.Text = "";
             this.ResponseHexTextBox.WordWrap = false;
-            this.ResponseHexTextBox.BackColor = System.Drawing.Color.FromArgb(30, 30, 30);
-            this.ResponseHexTextBox.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
             // 
             // ResponseAsciiTextBox
             // 
