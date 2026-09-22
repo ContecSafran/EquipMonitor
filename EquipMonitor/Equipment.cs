@@ -21,9 +21,12 @@ namespace EquipMonitor
         private System.Windows.Forms.Timer saveTimer;
         private bool isFirstLayout = true;
         private bool isRestoring = false;
+        private int hexGroupSize = 16;
         public Equipment()
         {
             InitializeComponent();
+            this.DoubleBuffered = true;
+            SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
             this.commandInputSplitContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
             InitTimer();
             equipment.info.name = "1";
@@ -73,6 +76,8 @@ namespace EquipMonitor
             {
                 this.hexUtil1.Visible = this.isHexMassage.Checked;
             };
+
+            this.hexResponseUtil.TargetTextBox = this.ResponseHexTextBox;
         }
 
         private void InitTimer()
@@ -103,7 +108,82 @@ namespace EquipMonitor
                     UpdateStatusUI(connected);
                 }
             };
+            equipment.OnPacketAdded = (packet) =>
+            {
+                if (this.InvokeRequired)
+                {
+                    this.Invoke(new Action(() => AddPacketToList(packet)));
+                }
+                else
+                {
+                    AddPacketToList(packet);
+                }
+            };
             UpdateStatusUI(false);
+        }
+
+        private void AddPacketToList(PacketInfo packet)
+        {
+            packetListBox.Items.Add(packet);
+            packetListBox.SelectedIndex = packetListBox.Items.Count - 1;
+        }
+
+        public void SetHexGroupSize(int size)
+        {
+            hexGroupSize = size;
+            ResponseHexTextBox.BytesPerLine = size;
+            if (packetListBox.SelectedItem is PacketInfo packet)
+                RefreshPacketView(packet);
+        }
+
+        // HexUtil 연동 시 이 메서드를 교체하면 됩니다.
+        public static string FormatHexView(byte[] data, int bytesPerLine)
+        {
+            if (data == null || data.Length == 0) return string.Empty;
+            int half = bytesPerLine / 2;
+            var sb = new StringBuilder();
+
+            // 열 번호 헤더 (1-based, 오프셋 10자 공백 + 번호)
+            sb.Append(new string(' ', 10));
+            for (int i = 0; i < bytesPerLine; i++)
+            {
+                if (i == half) sb.Append(' ');
+                sb.AppendFormat("{0,2} ", i + 1);
+            }
+            sb.AppendLine();
+
+            // 데이터 줄
+            for (int offset = 0; offset < data.Length; offset += bytesPerLine)
+            {
+                sb.AppendFormat("{0:X8}  ", offset);
+
+                int lineCount = Math.Min(bytesPerLine, data.Length - offset);
+                for (int i = 0; i < bytesPerLine; i++)
+                {
+                    if (i == half) sb.Append(' ');
+                    if (i < lineCount)
+                        sb.AppendFormat("{0:X2} ", data[offset + i]);
+                    else
+                        sb.Append("   ");
+                }
+                sb.AppendLine();
+            }
+            return sb.ToString();
+        }
+
+        private string FormatHex(byte[] data, int groupSize)
+            => FormatHexView(data, groupSize);
+
+        private void RefreshPacketView(PacketInfo packet)
+        {
+            ResponseHexTextBox.Text = FormatHex(packet.Data, hexGroupSize);
+            ResponseAsciiTextBox.Text = Encoding.UTF8.GetString(packet.Data);
+        }
+
+        private void packetListBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (packetListBox.SelectedItem is PacketInfo packet)
+                RefreshPacketView(packet);
         }
 
         private void UpdateStatusUI(bool connected)
@@ -132,6 +212,7 @@ namespace EquipMonitor
 
         private void clearResponseButton_Click(object sender, EventArgs e)
         {
+            this.packetListBox.Items.Clear();
             this.ResponseHexTextBox.Clear();
             this.ResponseAsciiTextBox.Clear();
         }
@@ -149,6 +230,11 @@ namespace EquipMonitor
             equipment.info.name = newName;
             this.Name = newName;
             WriteEquipmentInfo();
+        }
+
+        public void SetLogTextBox(System.Windows.Forms.TextBoxBase logTextBox)
+        {
+            equipment.LogTextBox = logTextBox;
         }
 
         public void SaveEquipmentInfo()
@@ -196,12 +282,12 @@ namespace EquipMonitor
         {
             if (string.IsNullOrWhiteSpace(equipment.info.ip))
             {
-                equipment.ReceiveAsciiResponse("오류: IP 주소를 입력하세요.");
+                equipment.ReceiveLogResponse("오류: IP 주소를 입력하세요.");
                 return;
             }
             if (equipment.info.port <= 0)
             {
-                equipment.ReceiveAsciiResponse("오류: 유효한 포트 번호를 입력하세요.");
+                equipment.ReceiveLogResponse("오류: 유효한 포트 번호를 입력하세요.");
                 return;
             }
 
@@ -217,14 +303,12 @@ namespace EquipMonitor
         }
         void WriteEquipmentInfo()
         {
-            StreamWriter writer = File.CreateText(MainForm.EquipmentPath + this.equipment.info.name + ".txt");
-            
             this.equipment.info.ip = this.ipText.Text;
             int port = 0;
             Int32.TryParse(this.portTextBox.Text, out port);
             this.equipment.info.port = port;
             this.equipment.info.isHex = this.isHexMassage.Checked;
-            
+
             this.equipment.info.commands.Clear();
             foreach (var item in this.commandListBox.Items)
             {
@@ -243,17 +327,24 @@ namespace EquipMonitor
             this.equipment.info.tail = this.tailTextBox.Text;
             var options = new JsonSerializerOptions { WriteIndented = true };
             string jsonString = System.Text.Json.JsonSerializer.Serialize(equipment.info, options);
-            writer.Write(jsonString);
-            writer.Close();
+            using (StreamWriter writer = File.CreateText(MainForm.EquipmentPath + this.equipment.info.name + ".txt"))
+            {
+                writer.Write(jsonString);
+            }
         }
         void ReadEquipmentInfo(FileInfo fi)
         {
-            // 2. 파일 내용 읽기
-            string jsonString = File.ReadAllText(fi.FullName);
-
-            // 3. 역직렬화 (JSON -> 객체)
-            // <T> 부분에 복원할 클래스 명을 넣습니다.
-            this.equipment.info = System.Text.Json.JsonSerializer.Deserialize<EquipmentInfo>(jsonString);
+            try
+            {
+                string jsonString = File.ReadAllText(fi.FullName);
+                var parsed = System.Text.Json.JsonSerializer.Deserialize<EquipmentInfo>(jsonString);
+                if (parsed != null)
+                    this.equipment.info = parsed;
+            }
+            catch (Exception)
+            {
+                // 파일 손상 시 기본값 유지
+            }
 
             this.equipment.info.name = Path.GetFileNameWithoutExtension(fi.FullName);
 
@@ -365,7 +456,7 @@ namespace EquipMonitor
             }
             else
             {
-                equipment.ReceiveAsciiResponse("UDP 모드입니다.");
+                equipment.ReceiveLogResponse("UDP 모드입니다.");
             }
         }
 
@@ -374,7 +465,7 @@ namespace EquipMonitor
             if (equipment.info.clientType == constants.ClientType.TCP)
             {
                 await tcpClient.CloseAsync();
-                equipment.ReceiveAsciiResponse("TCP 연결이 해제되었습니다.");
+                equipment.ReceiveLogResponse("TCP 연결이 해제되었습니다.");
             }
         }
 

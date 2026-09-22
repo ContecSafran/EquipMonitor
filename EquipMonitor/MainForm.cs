@@ -19,6 +19,26 @@ namespace EquipMonitor
         {
             InitializeComponent();
             this.FormClosing += Form1_FormClosing;
+            this.ResizeBegin += MainForm_ResizeBegin;
+            this.ResizeEnd += MainForm_ResizeEnd;
+            this.DoubleBuffered = true;
+            SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
+        }
+
+        private void MainForm_ResizeBegin(object sender, EventArgs e)
+        {
+            this.SuspendLayout();
+            foreach (TabPage tab in Maintab.TabPages)
+                foreach (Control c in tab.Controls)
+                    c.SuspendLayout();
+        }
+
+        private void MainForm_ResizeEnd(object sender, EventArgs e)
+        {
+            foreach (TabPage tab in Maintab.TabPages)
+                foreach (Control c in tab.Controls)
+                    c.ResumeLayout(true);
+            this.ResumeLayout(true);
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -62,23 +82,19 @@ namespace EquipMonitor
         }
         private void addEquipment(Equipment equipment)
         {
+            equipment.SetLogTextBox(this.logTextBox);
+            equipment.SetHexGroupSize(GetCurrentHexGroupSize());
             System.Windows.Forms.Panel containerPanel = new System.Windows.Forms.Panel();
             containerPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             containerPanel.AutoScroll = true; // 스크롤 활성화
 
-            equipment.Dock = System.Windows.Forms.DockStyle.None;
+            // Dock.Fill + MinimumSize 조합: 패널이 크면 꽉 채우고,
+            // 최소 크기보다 작아지면 AutoScroll 이 스크롤바를 표시한다.
+            // (Resize 이벤트에 의존하면 첫 탭 추가 시 이벤트가 발생하지 않아 Fill 되지 않음)
+            equipment.MinimumSize = new System.Drawing.Size(750, 350); // 최소 보장 크기
             equipment.Location = new System.Drawing.Point(0, 0);
-            System.Drawing.Size minSize = new System.Drawing.Size(750, 350); // 최소 보장 크기
-            equipment.Size = minSize;
+            equipment.Dock = System.Windows.Forms.DockStyle.Fill;
             equipment.TabIndex = 0;
-
-            // Panel 크기 변화 시 동적으로 Equipment 크기 설정
-            containerPanel.Resize += (sender, e) =>
-            {
-                int newWidth = Math.Max(containerPanel.ClientSize.Width, minSize.Width);
-                int newHeight = Math.Max(containerPanel.ClientSize.Height, minSize.Height);
-                equipment.Size = new System.Drawing.Size(newWidth, newHeight);
-            };
 
             System.Windows.Forms.TabPage tabPage1 = new System.Windows.Forms.TabPage();
             tabPage1.SuspendLayout();
@@ -91,7 +107,8 @@ namespace EquipMonitor
             tabPage1.TabIndex = 0;
             tabPage1.Text = equipment.Name;
             tabPage1.UseVisualStyleBackColor = true;
-            tabPage1.ResumeLayout(false);
+            tabPage1.ResumeLayout(true);
+            tabPage1.PerformLayout();
         }
         public FileInfo[] getEquipmentPathList()
         {
@@ -150,6 +167,27 @@ namespace EquipMonitor
                 }
             }
             return null;
+        }
+
+        private int GetCurrentHexGroupSize()
+        {
+            foreach (var btn in new[] { hexBtn4, hexBtn8, hexBtn16, hexBtn32, hexBtn64 })
+                if (btn.Checked && int.TryParse(btn.Text, out int v)) return v;
+            return 16;
+        }
+
+        private void hexBytesPerLine_Click(object sender, EventArgs e)
+        {
+            var clicked = (ToolStripButton)sender;
+            foreach (var btn in new[] { hexBtn4, hexBtn8, hexBtn16, hexBtn32, hexBtn64 })
+                btn.Checked = (btn == clicked);
+
+            int groupSize = GetCurrentHexGroupSize();
+            foreach (TabPage tab in Maintab.TabPages)
+            {
+                Equipment eq = FindEquipment(tab);
+                eq?.SetHexGroupSize(groupSize);
+            }
         }
 
         private void CopyEquipmentButton_Click(object sender, EventArgs e)

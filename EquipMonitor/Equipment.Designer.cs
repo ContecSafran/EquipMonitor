@@ -14,9 +14,12 @@ namespace EquipMonitor
         /// <param name="disposing">관리되는 리소스를 삭제해야 하면 true이고, 그렇지 않으면 false입니다.</param>
         protected override void Dispose(bool disposing)
         {
-            if (disposing && (components != null))
+            if (disposing)
             {
-                components.Dispose();
+                if (tcpClient != null)
+                    _ = tcpClient.CloseAsync();
+                if (components != null)
+                    components.Dispose();
             }
             base.Dispose(disposing);
         }
@@ -72,8 +75,11 @@ namespace EquipMonitor
             this.SendMessageButton = new System.Windows.Forms.Button();
             this.clearResponseButton = new System.Windows.Forms.Button();
             this.logTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
+            this.packetListBox = new System.Windows.Forms.ListBox();
+            this.hexViewPanel = new System.Windows.Forms.Panel();
+            this.hexResponseUtil = new EquipMonitor.HexUtil();
+            this.ResponseHexTextBox = new EquipMonitor.HexRichTextBox();
             this.ResponseAsciiTextBox = new System.Windows.Forms.TextBox();
-            this.ResponseHexTextBox = new System.Windows.Forms.TextBox();
             this.EquipmentTableLayout.SuspendLayout();
             this.panel2.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -90,6 +96,7 @@ namespace EquipMonitor
             this.commandDescLayout.SuspendLayout();
             this.sendButtonPanel.SuspendLayout();
             this.logTableLayoutPanel.SuspendLayout();
+            this.hexViewPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // EquipmentTableLayout
@@ -622,11 +629,13 @@ namespace EquipMonitor
             // 
             // logTableLayoutPanel
             // 
-            this.logTableLayoutPanel.ColumnCount = 2;
-            this.logTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.logTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.logTableLayoutPanel.Controls.Add(this.ResponseAsciiTextBox, 1, 0);
-            this.logTableLayoutPanel.Controls.Add(this.ResponseHexTextBox, 0, 0);
+            this.logTableLayoutPanel.ColumnCount = 3;
+            this.logTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.logTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 37.5F));
+            this.logTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 37.5F));
+            this.logTableLayoutPanel.Controls.Add(this.packetListBox, 0, 0);
+            this.logTableLayoutPanel.Controls.Add(this.hexViewPanel, 1, 0);
+            this.logTableLayoutPanel.Controls.Add(this.ResponseAsciiTextBox, 2, 0);
             this.logTableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.logTableLayoutPanel.Location = new System.Drawing.Point(3, 289);
             this.logTableLayoutPanel.Name = "logTableLayoutPanel";
@@ -635,25 +644,62 @@ namespace EquipMonitor
             this.logTableLayoutPanel.Size = new System.Drawing.Size(924, 160);
             this.logTableLayoutPanel.TabIndex = 12;
             // 
-            // ResponseAsciiTextBox
+            // packetListBox
             // 
-            this.ResponseAsciiTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ResponseAsciiTextBox.Location = new System.Drawing.Point(465, 3);
-            this.ResponseAsciiTextBox.Multiline = true;
-            this.ResponseAsciiTextBox.Name = "ResponseAsciiTextBox";
-            this.ResponseAsciiTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.ResponseAsciiTextBox.Size = new System.Drawing.Size(456, 154);
-            this.ResponseAsciiTextBox.TabIndex = 11;
+            this.packetListBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.packetListBox.FormattingEnabled = true;
+            this.packetListBox.ItemHeight = 12;
+            this.packetListBox.Location = new System.Drawing.Point(3, 3);
+            this.packetListBox.Name = "packetListBox";
+            this.packetListBox.Size = new System.Drawing.Size(225, 154);
+            this.packetListBox.TabIndex = 12;
+            this.packetListBox.SelectedIndexChanged += new System.EventHandler(this.packetListBox_SelectedIndexChanged);
+            // 
+            // hexViewPanel
+            // 
+            this.hexViewPanel.Controls.Add(this.hexResponseUtil);
+            this.hexViewPanel.Controls.Add(this.ResponseHexTextBox);
+            this.hexViewPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.hexViewPanel.Location = new System.Drawing.Point(234, 3);
+            this.hexViewPanel.Name = "hexViewPanel";
+            this.hexViewPanel.Size = new System.Drawing.Size(340, 154);
+            this.hexViewPanel.TabIndex = 13;
+            // 
+            // hexResponseUtil
+            // 
+            this.hexResponseUtil.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.hexResponseUtil.Location = new System.Drawing.Point(0, 124);
+            this.hexResponseUtil.Name = "hexResponseUtil";
+            this.hexResponseUtil.Size = new System.Drawing.Size(340, 30);
+            this.hexResponseUtil.TabIndex = 13;
+            this.hexResponseUtil.TargetTextBox = null;
             // 
             // ResponseHexTextBox
             // 
+            this.ResponseHexTextBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(30)))));
+            this.ResponseHexTextBox.BytesPerLine = 16;
             this.ResponseHexTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ResponseHexTextBox.Location = new System.Drawing.Point(3, 3);
-            this.ResponseHexTextBox.Multiline = true;
+            this.ResponseHexTextBox.Font = new System.Drawing.Font("Consolas", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ResponseHexTextBox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.ResponseHexTextBox.Location = new System.Drawing.Point(0, 0);
             this.ResponseHexTextBox.Name = "ResponseHexTextBox";
-            this.ResponseHexTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.ResponseHexTextBox.Size = new System.Drawing.Size(456, 154);
+            this.ResponseHexTextBox.OffsetLength = 10;
+            this.ResponseHexTextBox.ReadOnly = true;
+            this.ResponseHexTextBox.Size = new System.Drawing.Size(340, 154);
             this.ResponseHexTextBox.TabIndex = 10;
+            this.ResponseHexTextBox.Text = "";
+            this.ResponseHexTextBox.WordWrap = false;
+            // 
+            // ResponseAsciiTextBox
+            // 
+            this.ResponseAsciiTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ResponseAsciiTextBox.Location = new System.Drawing.Point(580, 3);
+            this.ResponseAsciiTextBox.Multiline = true;
+            this.ResponseAsciiTextBox.Name = "ResponseAsciiTextBox";
+            this.ResponseAsciiTextBox.ReadOnly = true;
+            this.ResponseAsciiTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.ResponseAsciiTextBox.Size = new System.Drawing.Size(341, 154);
+            this.ResponseAsciiTextBox.TabIndex = 11;
             // 
             // Equipment
             // 
@@ -686,6 +732,7 @@ namespace EquipMonitor
             this.sendButtonPanel.ResumeLayout(false);
             this.logTableLayoutPanel.ResumeLayout(false);
             this.logTableLayoutPanel.PerformLayout();
+            this.hexViewPanel.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -702,7 +749,6 @@ namespace EquipMonitor
         private System.Windows.Forms.Button SendMessageButton;
         private System.Windows.Forms.Button clearResponseButton;
         private System.Windows.Forms.TextBox MessageTextBox;
-        private System.Windows.Forms.TextBox ResponseHexTextBox;
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.RadioButton udpRadio;
         private System.Windows.Forms.RadioButton tcpRadio;
@@ -718,6 +764,10 @@ namespace EquipMonitor
         private System.Windows.Forms.Button disconnectButton;
         private System.Windows.Forms.Button connectButton;
         private System.Windows.Forms.TableLayoutPanel logTableLayoutPanel;
+        private System.Windows.Forms.ListBox packetListBox;
+        private System.Windows.Forms.Panel hexViewPanel;
+        private HexRichTextBox ResponseHexTextBox;
+        private HexUtil hexResponseUtil;
         private System.Windows.Forms.TextBox ResponseAsciiTextBox;
         private System.Windows.Forms.TableLayoutPanel commandLayout;
         private System.Windows.Forms.TableLayoutPanel commandListManageLayout;

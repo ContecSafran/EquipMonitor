@@ -8,10 +8,10 @@ namespace EquipMonitor
 {
     public partial class DataConverter : UserControl
     {
-        private TextBox _targetTextBox;
+        private TextBoxBase _targetTextBox;
         private bool _isUpdatingText = false;
 
-        public TextBox TargetTextBox
+        public TextBoxBase TargetTextBox
         {
             get { return _targetTextBox; }
             set
@@ -56,17 +56,22 @@ namespace EquipMonitor
             {
                 _isUpdatingText = true;
 
-                int selectionStart = _targetTextBox.SelectionStart;
-                string text = _targetTextBox.Text;
+                int byteIndex;
+                string hexOnly;
 
-                int byteIndex = selectionStart / 3;
-
-                string hexOnly = text.Replace(" ", "").Replace("\r", "").Replace("\n", "");
-                if (byteIndex * 2 >= hexOnly.Length)
+                if (_targetTextBox is HexRichTextBox hexBox)
                 {
-                    txtValue.Text = "";
-                    return;
+                    byteIndex = hexBox.GetByteIndexFromPosition(_targetTextBox.SelectionStart);
+                    hexOnly = hexBox.StripOffsets(_targetTextBox.Text)
+                                    .Replace(" ", "").Replace("\r", "").Replace("\n", "");
                 }
+                else
+                {
+                    byteIndex = _targetTextBox.SelectionStart / 3;
+                    hexOnly = _targetTextBox.Text.Replace(" ", "").Replace("\r", "").Replace("\n", "");
+                }
+
+                if (byteIndex * 2 >= hexOnly.Length) { txtValue.Text = ""; return; }
 
                 int neededBytes = GetNeededBytes(cmbDataType.Text);
                 if (neededBytes <= 0 || byteIndex * 2 + neededBytes * 2 > hexOnly.Length)
@@ -80,9 +85,7 @@ namespace EquipMonitor
 
                 bool isLittleEndian = cmbEndian.Text == "Little Endian";
                 if (BitConverter.IsLittleEndian != isLittleEndian)
-                {
                     Array.Reverse(bytes);
-                }
 
                 txtValue.Text = BytesToValueString(bytes, cmbDataType.Text);
             }
@@ -98,7 +101,7 @@ namespace EquipMonitor
 
         private void TxtValue_TextChanged(object sender, EventArgs e)
         {
-            if (_targetTextBox == null || _isUpdatingText) return;
+            if (_targetTextBox == null || _isUpdatingText || _targetTextBox.ReadOnly) return;
 
             try
             {

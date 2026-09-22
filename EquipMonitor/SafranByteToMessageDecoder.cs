@@ -19,7 +19,7 @@ namespace EquipMonitor
         }
         protected override void Decode(IChannelHandlerContext context, IByteBuffer msg, List<object> output)
         {
-            string receivedMessage = ByteArrayToString(msg.Array, msg.ArrayOffset, msg.ReadableBytes);
+            string receivedMessage = ByteArrayToString(msg.Array, msg.ArrayOffset + msg.ReaderIndex, msg.ReadableBytes);
             equipmentDto.ReceiveHexResponse(receivedMessage);
         }
         public static string ByteArrayToString(byte[] ba, int start, int size)
